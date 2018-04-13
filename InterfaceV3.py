@@ -9,7 +9,7 @@ class Affichage:
         self.hauteur=512
         self.largeur=512
         rempl=self.hauteur/self.nbreDeCasesParLigne
-
+        self.grille = Grille;
         self.fen=Tk()
         self.can=Canvas(self.fen, width=self.largeur, height=self.hauteur, bg='ivory')
         self.can.pack()
@@ -18,6 +18,12 @@ class Affichage:
         for c in range(self.nbreDeCasesParLigne):
                     self.can.create_line(c*rempl, 0,c*rempl,self.hauteur)
                     self.can.create_line(0,c*rempl,self.largeur,c*rempl)
+
+    def chgColorType(self,typeC,color):
+        for column in self.grille.plan:
+            for node in column:
+                if node.typeN == typeC:
+                    self.affNode(node,color)
 
     def affNode(self,Node, color = "red"):
         rempl=self.hauteur/self.nbreDeCasesParLigne

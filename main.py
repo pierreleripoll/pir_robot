@@ -19,3 +19,9 @@ lab.setNode(goal);
 astar = AStar(lab)
 
 path = astar.findPath(start,goal)
+
+aff= Affichage(lab)
+aff.chgColorType("?","black")
+aff.affPath(path)
+aff.affNode(start,"green")
+aff.affNode(goal,"blue")
