@@ -31,7 +31,7 @@ class Affichage:
         y=Node.y*rempl
         self.can.create_rectangle(x,y,x+rempl,y+rempl,fill=color)
 
-    def affChemin(self,path,color = None):
+    def affPath(self,path,color = None):
         for node in path:
             if color :
                 self.affNode(node,color)
