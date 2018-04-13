@@ -4,7 +4,7 @@ from tkinter import *
 
 class Affichage:
 
-    def __init__(self,Grille):
+    def __init__(self,Grille,dic = None):
         self.nbreDeCasesParLigne=Grille.nRows
         self.hauteur=512
         self.largeur=512
@@ -18,6 +18,11 @@ class Affichage:
         for c in range(self.nbreDeCasesParLigne):
                     self.can.create_line(c*rempl, 0,c*rempl,self.hauteur)
                     self.can.create_line(0,c*rempl,self.largeur,c*rempl)
+        if dic :
+            print("Dic exists :",dic)
+            self.dic = dic
+            for typeN in dic:
+                self.colorType(typeN,dic[typeN])
 
     def colorType(self,typeC,color):
         for column in self.grille.plan:

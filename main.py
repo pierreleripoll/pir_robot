@@ -20,8 +20,9 @@ astar = AStar(lab)
 
 path = astar.findPath(start,goal)
 
-aff= Affichage(lab)
-aff.colorType("?","black")
+dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
+
+aff= Affichage(lab,dic)
+
+path.pop(0)
 aff.path(path)
-aff.node(start,"green")
-aff.node(goal,"blue")
