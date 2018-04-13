@@ -19,12 +19,15 @@ class Affichage:
                     self.can.create_line(c*rempl, 0,c*rempl,self.hauteur)
                     self.can.create_line(0,c*rempl,self.largeur,c*rempl)
 
-    def affNode(self,Node):
+    def affNode(self,Node, color = "red"):
         rempl=self.hauteur/self.nbreDeCasesParLigne
         x=Node.x*rempl
         y=Node.y*rempl
-        self.can.create_rectangle(x,y,x+rempl,y+rempl,fill='red')
+        self.can.create_rectangle(x,y,x+rempl,y+rempl,fill=color)
 
-    def affChemin(self,path):
+    def affChemin(self,path,color = None):
         for node in path:
-            self.affNode(node)
+            if color :
+                self.affNode(node,color)
+            else :
+                self.affNode(node)
