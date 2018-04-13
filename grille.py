@@ -1,3 +1,11 @@
+
+import sys
+import math
+
+
+
+from node import Node
+
 class Grille:
 
     def __init__(self,r,c):
@@ -38,7 +46,7 @@ class Grille:
     def getCarre(self,pos,l = 0):
         carre= []
 
-        for i in range(2*l+1)
+        for i in range(2*l+1):
             carre.append(self.getNode(pos.x-l+i,pos.y-l).copy())
             carre.append(self.getNode(pos.x-l+i,pos.y+l).copy())
 
@@ -67,9 +75,21 @@ class Grille:
 
     def chgRow(self,i,row):
         #print("New row : ",row,file=sys.stderr)
-        for j,node in enumerate(row):
-            self.chgNode(j,i,node)
+        for j,typeN in enumerate(row):
+            self.chgNode(j,i,typeN)
 
+    def setNode(self,node):
+        self.plan[node.x][node.y] = node;
+
+    def setPath(self,path, typeN = "*"):
+        for node in path:
+            node.changeType(typeN)
+            self.setNode(node);
+
+    def setRect(self,x,y,largeur,hauteur,typeN):
+        for i,column in enumerate(self.plan[x:x+largeur]):
+            for j in range(y,y+hauteur):
+                self.chgNode(i+x,j,typeN);
 
 
     def __repr__(self):

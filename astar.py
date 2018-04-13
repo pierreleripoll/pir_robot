@@ -36,7 +36,7 @@ class AStar:
 
         self.insert(goal,path)
         findPath = 1
-        if goal.typeN == 'T':
+        if goal.typeN == 'S':
             print("Closed list :",self.closedList,file=sys.stderr)
 
 
@@ -54,15 +54,21 @@ class AStar:
         print("Path :",list(reversed(path)),file=sys.stderr)
         return list(reversed(path))
 
+
+    def returnPath2(self,node):
+        path = []
+        print("returnPath2 in use")
+        while node.parent :
+            path.append(node.parent)
+            node = node.parent
+        return list(reversed(path))
+
     def findPath(self,start,goal):
         self.openList.clear()
         self.closedList.clear()
         self.addNodeToOpenList(start.copy(),goal)
         notFinish = 1
         print("FindPath : ",repr(start)," to ",repr(goal),file=sys.stderr)
-
-        if not self.lab.isReachable(goal) :
-            return []
 
         print("openList before :",self.openList,file=sys.stderr)
 
@@ -76,7 +82,8 @@ class AStar:
             notFinish = self.treat(self.openList[0],goal)
 
         #print("Closed list :",self.closedList," goal :",repr(goal),file=sys.stderr)
-        return self.returnPath(start,goal)
+
+        return self.returnPath2(goal)
 
     def treat(self,node,goal):
 
@@ -89,6 +96,7 @@ class AStar:
         voisins = self.lab.findVoisins(node)
         #print("Voisins :",voisins,file=sys.stderr)
         for n in voisins:
+            n.setParent(node)
             self.addNodeToOpenList(n.copy(),goal,node.cout)
 
 
@@ -97,7 +105,7 @@ class AStar:
             #print("OpenList empty",file=sys.stderr)
             return 0
         if node.dist(goal) == 0:
-            print("Goal find",file=sys.stderr)
+            print("Goal find, node.dist(goal)=0",file=sys.stderr)
             return 0
         if goal.typeN == '?' and node.dist(goal)==1:
             print("Goal find",file=sys.stderr)
@@ -108,7 +116,7 @@ class AStar:
 
     def addNodeToOpenList(self,node,goal,cout=0):
         node.cout = cout+1
-        node.h = int(cout +node.dist(goal))
+        node.h =cout +node.dist(goal)
         if not self.alreadyBestIn(node,self.closedList):
             self.insert(node,self.openList)
 
