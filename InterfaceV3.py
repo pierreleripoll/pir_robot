@@ -1,9 +1,10 @@
 from tkinter import *
-def envoyercoordonnees(event):
-    x,y=event.x-event.x%40,event.y-event.y%40
-    can.create_rectangle(x, y, x+40, y+40, fill='red')
-def affichage(Grille):
 
+
+
+
+
+def affichage(Grille):
     nbreDeCasesParLigne=Grille.nRows
     hauteur=512
     largeur=512
@@ -11,7 +12,6 @@ def affichage(Grille):
 
     fen=Tk()
     can=Canvas(fen, width=largeur, height=hauteur, bg='ivory')
-    #can.bind("<Button-1>", envoyercoordonnees)
     can.pack()
     bstop=Button(fen, text='Fermer la fenêtre', command=fen.destroy)
     bstop.pack()
@@ -20,3 +20,9 @@ def affichage(Grille):
                 can.create_line(0,c*rempl,largeur,c*rempl)
 
     fen.mainloop()
+
+def affChemin(Node,ajustage):
+    x=Node.x
+    y=Node.y
+    rempl=ajustage
+    can.create_rectangle(x,y,x+rempl,y+rempl,fill='red')
