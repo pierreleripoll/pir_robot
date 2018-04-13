@@ -20,7 +20,7 @@ class Affichage:
                     self.can.create_line(0,c*rempl,self.largeur,c*rempl)
 
     def affNode(self,Node):
-        x=Node.x
-        y=Node.y
         rempl=self.hauteur/self.nbreDeCasesParLigne
+        x=Node.x*rempl
+        y=Node.y*rempl
         self.can.create_rectangle(x,y,x+rempl,y+rempl,fill='red')
