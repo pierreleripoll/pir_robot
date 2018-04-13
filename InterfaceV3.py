@@ -36,4 +36,4 @@ class Affichage:
             if color :
                 self.node(node,color)
             else :
-                self.affNode(node)
+                self.node(node)
