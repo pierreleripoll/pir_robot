@@ -2,7 +2,7 @@ from tkinter import *
 
 
 
-class Affichage:
+class Display:
 
     def __init__(self,Grille,dic = None):
         self.nbreDeCasesParLigne=Grille.nRows

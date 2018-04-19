@@ -61,6 +61,7 @@ class AStar:
         while node.parent :
             path.append(node.parent)
             node = node.parent
+        print(repr(list(reversed(path))))
         return list(reversed(path))
 
     def findPath(self,start,goal):
@@ -93,9 +94,9 @@ class AStar:
 
         self.insert(node,self.closedList)
 
-        voisins = self.lab.findVoisins(node)
-        #print("Voisins :",voisins,file=sys.stderr)
-        for n in voisins:
+        neighbors = self.lab.findNeighbors(node)
+        #print("neighbors :",neighbors,file=sys.stderr)
+        for n in neighbors:
             n.setParent(node)
             self.addNodeToOpenList(n.copy(),goal,node.cout)
 

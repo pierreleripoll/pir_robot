@@ -22,25 +22,25 @@ class Grille:
         self.plan[x][y].changeType(typeN)
 
 
-    def findVoisins(self,node, obstacle = "false",range = 1):
-        voisins = []
+    def findNeighbors(self,node, obstacle = "false",range = 1):
+        neighbors = []
         X = node.x
         Y = node.y
 
-        voisin = self.getNode(X+range,Y)
-        if not voisin.isObstacle() or obstacle=="true":
-            voisins.append(voisin)
-        voisin = self.getNode(X,Y+range)
-        if not voisin.isObstacle()or obstacle=="true":
-            voisins.append(voisin)
-        voisin = self.getNode(X-range,Y)
-        if not voisin.isObstacle()or obstacle=="true":
-            voisins.append(voisin)
-        voisin = self.getNode(X,Y-range)
-        if not voisin.isObstacle()or obstacle=="true":
-            voisins.append(voisin)
+        neighbor = self.getNode(X+range,Y)
+        if not neighbor.isObstacle() or obstacle=="true":
+            neighbors.append(neighbor)
+        neighbor = self.getNode(X,Y+range)
+        if not neighbor.isObstacle()or obstacle=="true":
+            neighbors.append(neighbor)
+        neighbor = self.getNode(X-range,Y)
+        if not neighbor.isObstacle()or obstacle=="true":
+            neighbors.append(neighbor)
+        neighbor = self.getNode(X,Y-range)
+        if not neighbor.isObstacle()or obstacle=="true":
+            neighbors.append(neighbor)
 
-        return voisins
+        return neighbors
 
 
     def getCarre(self,pos,l = 0):

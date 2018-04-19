@@ -19,6 +19,7 @@ class Node:
             return 1
         else:
             return 0
+
     def setParent(self,node):
         self.parent = node
 
@@ -31,8 +32,6 @@ class Node:
 
     def __repr__(self):
         return str(self.x)+","+str(self.y)+":"+str(self.typeN)+",h"+str(self.h)+" P:"+str(self.parent)
-
-
 
     def __str__(self):
         return str(self.typeN)
