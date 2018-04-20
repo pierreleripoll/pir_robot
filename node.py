@@ -3,10 +3,11 @@ import math
 
 class Node:
 
-    def __init__(self,x,y,typeN = '?'):
+    def __init__(self,x,y,typeN = '?', txt=None):
         self.x = x
         self.y = y
         self.typeN = typeN
+        self.txt = txt # texte à afficher le cas échéant
         self.cout = math.inf
         self.h = 0 #heuristique
         self.parent = None;
@@ -28,6 +29,7 @@ class Node:
         returnV.typeN = self.typeN
         returnV.h = self.h
         returnV.parent = self.parent
+        returnV.txt = self.txt
         return returnV
 
     def __repr__(self):
@@ -46,3 +48,4 @@ class Node:
     def reset(self):
         self.cout = 0
         self.h= 0
+        self.parent = None

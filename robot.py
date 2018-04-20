@@ -8,7 +8,9 @@ class Robot :
     def __init__(self, name, start, goal) :
         self.name = name
         self.start = start
+        self.start.txt = name
         self.goal = goal
+        self.goal.txt = name
         self.path = []
         self.x = start.x
         self.y = start.y

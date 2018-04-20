@@ -65,6 +65,7 @@ class AStar:
         return list(reversed(path))
 
     def findPath(self,start,goal):
+        self.lab.resetNodes()
         self.openList.clear()
         self.closedList.clear()
         self.addNodeToOpenList(start.copy(),goal)
@@ -91,7 +92,6 @@ class AStar:
         #print("openList before :",self.openList,file=sys.stderr)
 
 
-
         self.insert(node,self.closedList)
 
         neighbors = self.lab.findNeighbors(node)
@@ -106,10 +106,10 @@ class AStar:
             #print("OpenList empty",file=sys.stderr)
             return 0
         if node.dist(goal) == 0:
-            print("Goal find, node.dist(goal)=0",file=sys.stderr)
+            print("Goal found, node.dist(goal)=0",file=sys.stderr)
             return 0
         if goal.typeN == '?' and node.dist(goal)==1:
-            print("Goal find",file=sys.stderr)
+            print("Goal found",file=sys.stderr)
             return 0
 
         return 1
@@ -117,11 +117,16 @@ class AStar:
 
     def addNodeToOpenList(self,node,goal,cout=0):
         node.cout = cout+1
-        node.h =cout +node.dist(goal)
+        node.h = cout + node.dist(goal)
         if not self.alreadyBestIn(node,self.closedList):
             self.insert(node,self.openList)
 
-
+    # Renvoie la liste des chemins de tous les robots donnés en paramètres (dans une liste)
+    def findAllPaths(self, robots) :
+        paths = []
+        for i in range(len(robots)) :
+            paths.append(self.findPath(self.lab.robots[i].start, self.lab.robots[i].goal))
+        return paths
 
 def h(elem):
     return elem.h

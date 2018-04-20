@@ -4,41 +4,43 @@ from tkinter import *
 
 class Display:
 
-    def __init__(self,Grille,dic = None):
-        self.nbreDeCasesParLigne=Grille.nRows
-        self.hauteur=512
-        self.largeur=512
-        rempl=self.hauteur/self.nbreDeCasesParLigne
-        self.grille = Grille;
-        self.fen=Tk()
-        self.can=Canvas(self.fen, width=self.largeur, height=self.hauteur, bg='ivory')
+    def __init__(self,grille,dic = None):
+        self.boxesPerRow=grille.nRows
+        self.height=512
+        self.width=512
+        rempl=self.height/self.boxesPerRow
+        self.grille = grille
+        self.window=Tk()
+        self.can=Canvas(self.window, width=self.width, height=self.height, bg='ivory')
         self.can.pack()
-        self.bstop=Button(self.fen, text='Fermer la fenêtre', command=self.fen.destroy)
+        self.bstop=Button(self.window, text='Fermer la fenêtre', command=self.window.destroy)
         self.bstop.pack()
-        for c in range(self.nbreDeCasesParLigne):
-                    self.can.create_line(c*rempl, 0,c*rempl,self.hauteur)
-                    self.can.create_line(0,c*rempl,self.largeur,c*rempl)
+        for c in range(self.boxesPerRow):
+                    self.can.create_line(c*rempl, 0,c*rempl,self.height)
+                    self.can.create_line(0,c*rempl,self.width,c*rempl)
         if dic :
             print("Dic exists :",dic)
             self.dic = dic
             for typeN in dic:
                 self.colorType(typeN,dic[typeN])
 
-    def colorType(self,typeC,color):
+    def colorType(self,typeN,color):
         for column in self.grille.plan:
             for node in column:
-                if node.typeN == typeC:
+                if node.typeN == typeN:
                     self.node(node,color)
 
-    def node(self,Node, color = "red"):
-        rempl=self.hauteur/self.nbreDeCasesParLigne
-        x=Node.x*rempl
-        y=Node.y*rempl
-        self.can.create_rectangle(x,y,x+rempl,y+rempl,fill=color)
+    def node(self,node, color):
+        rempl=self.height/self.boxesPerRow
+        x=node.x*rempl
+        y=node.y*rempl
+        if node.typeN == "S" or node.typeN == "G" :
+            color = self.dic[node.typeN]
+        rect = self.can.create_rectangle(x,y,x+rempl,y+rempl,fill=color)
+        txt = self.can.create_text(x, y, text=node.txt, anchor="nw", width=rempl)
+        self.can.tag_raise(txt)
 
-    def path(self,path,color = None):
+    def path(self,path,color):
+        path.pop(0)
         for node in path:
-            if color :
-                self.node(node,color)
-            else :
-                self.node(node)
+            self.node(node, color)

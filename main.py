@@ -11,22 +11,36 @@ lab.setRect(15,15,10,2,".")
 lab.setRect(15,15,2,10,".");
 lab.setRect(20,15,2,10,".")
 lab.setRect(15,22,10,2,".")
-start = Node(15,20,"S")
-goal = Node(20,15,"G")
 
-lab.setNode(start)
-lab.setNode(goal)
+# Liste des robots
+robots = []
 
-A = Robot("A", start, goal)
-print(A)
+# Robot A
+aStart = Node(15,20,"S")
+aGoal = Node(20,15,"G")
+a = Robot("A", aStart, aGoal)
+print(a)
+robots.append(a)
+
+# Robot B
+bStart = Node(15, 22, "S")
+bGoal = Node(20, 20, "G")
+b = Robot("B", bStart, bGoal)
+print(b)
+robots.append(b)
+
+lab.setRobots(robots)
 
 astar = AStar(lab)
 
-path = astar.findPath(start,goal)
+# Liste des chemins des robots
+paths = astar.findAllPaths(robots)
+aPath = paths[0]
+bPath = paths[1]
 
 dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
 
-aff= Display(lab,dic)
+disp= Display(lab,dic)
 
-path.pop(0)
-aff.path(path)
+disp.path(aPath, "red")
+disp.path(bPath, "yellow")

@@ -12,6 +12,7 @@ class Grille:
         self.nRows = r
         self.nColumns = c
         self.plan = []
+        self.robots = [] # liste des robots évoluant dans la grille
 
         for i in range(c):
             self.plan.append([])
@@ -79,18 +80,26 @@ class Grille:
             self.chgNode(j,i,typeN)
 
     def setNode(self,node):
-        self.plan[node.x][node.y] = node;
+        self.plan[node.x][node.y] = node
 
     def setPath(self,path, typeN = "*"):
         for node in path:
             node.changeType(typeN)
-            self.setNode(node);
+            self.setNode(node)
 
     def setRect(self,x,y,largeur,hauteur,typeN):
         for i,column in enumerate(self.plan[x:x+largeur]):
             for j in range(y,y+hauteur):
-                self.chgNode(i+x,j,typeN);
+                self.chgNode(i+x,j,typeN)
 
+    # Initialise la liste des robots et set les noeuds start et goal de chacun
+    def setRobots(self, robots) :
+        for i in range(len(robots)) :
+            self.robots.append(robots[i])
+            self.setNode(self.robots[i].start)
+            #self.robots[i].start.txt = self.robots[i].name
+            self.setNode(self.robots[i].goal)
+            #self.robots[i].goal.txt = self.robots[i].name
 
     def __repr__(self):
         toPrint = []
