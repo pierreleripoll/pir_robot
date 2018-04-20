@@ -126,6 +126,7 @@ class AStar:
         paths = []
         for i in range(len(robots)) :
             paths.append(self.findPath(self.lab.robots[i].start, self.lab.robots[i].goal))
+            robots[i].path = paths[i]
         return paths
 
 def h(elem):

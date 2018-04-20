@@ -15,6 +15,24 @@ class Robot :
         self.x = start.x
         self.y = start.y
 
+    def isTurning(self, node) :
+        index = 1
+        for i in range(len(self.path)) :
+            if(self.path[i].x == node.x and self.path[i].y == node.y) :
+                index = i
+        if(index > 1) :
+            if(node.x == self.path[index-1].x) :
+                if(self.path[index-1].x == self.path[index-2].x) :
+                    return 0
+                else :
+                    return 1
+            elif(node.y == self.path[index-1].y) :
+                if(self.path[index-1].y == self.path[index-2].y) :
+                    return 0
+                else :
+                    return 1
+        else :
+            return 0
 
 
     def __repr__(self) :

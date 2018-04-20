@@ -41,6 +41,5 @@ class Display:
         self.can.tag_raise(txt)
 
     def path(self,path,color):
-        path.pop(0)
         for node in path:
             self.node(node, color)
