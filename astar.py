@@ -56,7 +56,7 @@ class AStar:
 
 
     def returnPath2(self,node):
-        path = []
+        path = [node]
         print("returnPath2 in use")
         while node.parent :
             path.append(node.parent)
