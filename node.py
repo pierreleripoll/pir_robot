@@ -9,7 +9,7 @@ class Node:
         self.typeN = typeN
         self.txt = txt # texte à afficher le cas échéant
         self.cout = math.inf
-        self.h = 0 #heuristique
+        self.h = 0 # heuristique
         self.parent = None;
 
     def changeType(self,typeN):

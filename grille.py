@@ -44,19 +44,19 @@ class Grille:
         return neighbors
 
 
-    def getCarre(self,pos,l = 0):
-        carre= []
+    def getSquare(self,pos,l = 0):
+        square= []
 
         for i in range(2*l+1):
-            carre.append(self.getNode(pos.x-l+i,pos.y-l).copy())
-            carre.append(self.getNode(pos.x-l+i,pos.y+l).copy())
+            square.append(self.getNode(pos.x-l+i,pos.y-l).copy())
+            square.append(self.getNode(pos.x-l+i,pos.y+l).copy())
 
         for i in range(2*(l-1)+2):
-            carre.append(self.getNode(pos.x-l,pos.y-l+i).copy())
-            carre.append(self.getNode(pos.x+l,pos.y-l+i).copy())
+            square.append(self.getNode(pos.x-l,pos.y-l+i).copy())
+            square.append(self.getNode(pos.x+l,pos.y-l+i).copy())
 
-        #sorted(carre, key= lambda Node: Node.dist(pos))
-        return carre
+        #sorted(square, key= lambda Node: Node.dist(pos))
+        return square
 
 
     def getNode(self,x,y):
@@ -87,9 +87,9 @@ class Grille:
             node.changeType(typeN)
             self.setNode(node)
 
-    def setRect(self,x,y,largeur,hauteur,typeN):
-        for i,column in enumerate(self.plan[x:x+largeur]):
-            for j in range(y,y+hauteur):
+    def setRect(self,x,y,width,height,typeN):
+        for i,column in enumerate(self.plan[x:x+width]):
+            for j in range(y,y+height):
                 self.chgNode(i+x,j,typeN)
 
     # Initialise la liste des robots et set les noeuds start et goal de chacun
@@ -97,9 +97,7 @@ class Grille:
         for i in range(len(robots)) :
             self.robots.append(robots[i])
             self.setNode(self.robots[i].start)
-            #self.robots[i].start.txt = self.robots[i].name
             self.setNode(self.robots[i].goal)
-            #self.robots[i].goal.txt = self.robots[i].name
 
     def __repr__(self):
         toPrint = []

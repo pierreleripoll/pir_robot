@@ -36,8 +36,8 @@ class AStar:
 
         self.insert(goal,path)
         findPath = 1
-        if goal.typeN == 'S':
-            print("Closed list :",self.closedList,file=sys.stderr)
+        '''if goal.typeN == 'S':
+            print("Closed list :",self.closedList,file=sys.stderr)'''
 
 
         while findPath and path[-1].dist(start)!=1:
@@ -51,17 +51,17 @@ class AStar:
             return []
         if goal.typeN=='?':
             path.pop(0)
-        print("Path :",list(reversed(path)),file=sys.stderr)
+        #print("Path :",list(reversed(path)),file=sys.stderr)
         return list(reversed(path))
 
 
     def returnPath2(self,node):
         path = [node]
-        print("returnPath2 in use")
+        #print("returnPath2 in use")
         while node.parent :
             path.append(node.parent)
             node = node.parent
-        print(repr(list(reversed(path))))
+        #print(repr(list(reversed(path))))
         return list(reversed(path))
 
     def findPath(self,start,goal):
@@ -70,9 +70,9 @@ class AStar:
         self.closedList.clear()
         self.addNodeToOpenList(start.copy(),goal)
         notFinish = 1
-        print("FindPath : ",repr(start)," to ",repr(goal),file=sys.stderr)
+        #print("FindPath : ",repr(start)," to ",repr(goal),file=sys.stderr)
 
-        print("openList before :",self.openList,file=sys.stderr)
+        #print("openList before :",self.openList,file=sys.stderr)
 
 
         while(notFinish and self.openList):
@@ -106,10 +106,10 @@ class AStar:
             #print("OpenList empty",file=sys.stderr)
             return 0
         if node.dist(goal) == 0:
-            print("Goal found, node.dist(goal)=0",file=sys.stderr)
+            #print("Goal found, node.dist(goal)=0",file=sys.stderr)
             return 0
         if goal.typeN == '?' and node.dist(goal)==1:
-            print("Goal found",file=sys.stderr)
+            #print("Goal found",file=sys.stderr)
             return 0
 
         return 1

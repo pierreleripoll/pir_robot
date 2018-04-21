@@ -2,7 +2,6 @@ import sys
 import math
 
 from node import Node
-from grille import Grille
 
 class Robot :
     def __init__(self, name, start, goal) :
@@ -12,9 +11,11 @@ class Robot :
         self.goal = goal
         self.goal.txt = name
         self.path = []
+        self.time = [] # liste contenant le temps théorique à chaque noeud du path
         self.x = start.x
         self.y = start.y
 
+    # Renvoie 1 si le robot doit tourner pour atteindre ce noeud, 0 sinon
     def isTurning(self, node) :
         index = 1
         for i in range(len(self.path)) :
@@ -34,6 +35,19 @@ class Robot :
         else :
             return 0
 
+    # Calcule le temps à chaque noeud du path
+    def setTime(self) :
+        self.time.append(0)
+        for i in range(1, len(self.path)) :
+            self.time.append(self.time[i-1] + 10 + 5*self.isTurning(self.path[i])) # constantes arbitraires
+
+    # Induit un délai supplémentaire avant d'atteindre le noeud donné en paramètre
+    def wait(self, node, delay) :
+        index = 0
+        while(self.path[index].x != node.x or self.path[index].y != node.y) :
+            index += 1
+        for i in range(index, len(self.path)) :
+            self.time[i] += delay
 
     def __repr__(self) :
-        return "Robot " + str(self.name) + " is at node (" + str(self.start.x) + "," + str(self.start.y) + ") and going to (" + str(self.goal.x) + "," + str(self.goal.y) + ")"
+        return "Robot " + str(self.name) + " is at node (" + str(self.x) + "," + str(self.y) + ") and going to (" + str(self.goal.x) + "," + str(self.goal.y) + ")"

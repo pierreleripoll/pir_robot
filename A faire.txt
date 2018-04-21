@@ -1,0 +1,6 @@
+- Faire intervenir le fait de tourner dans le coût des noeuds.
+
+- Faire en sorte que quand un robot atteint son goal, le noeud devienne un
+  obstacle pour les autres robots.
+
+- Afficher les coordonnées d'un noeud lorsqu'on passe la souris dessus.

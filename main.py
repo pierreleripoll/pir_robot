@@ -3,6 +3,7 @@ from node import Node
 from grille import Grille
 from astar import AStar
 from robot import Robot
+from coordination import Coordination
 
 from InterfaceV3 import *
 
@@ -16,18 +17,25 @@ lab.setRect(15,22,10,2,".")
 robots = []
 
 # Robot A
-aStart = Node(15,20,"S")
-aGoal = Node(20,15,"G")
+aStart = Node(18,22,"S")
+aGoal = Node(23, 22,"G")
 a = Robot("A", aStart, aGoal)
 print(a)
 robots.append(a)
 
 # Robot B
-bStart = Node(15, 22, "S")
-bGoal = Node(20, 20, "G")
+bStart = Node(21, 19, "S")
+bGoal = Node(21, 24, "G")
 b = Robot("B", bStart, bGoal)
 print(b)
 robots.append(b)
+
+# Robot C
+cStart = Node(20, 24, "S")
+cGoal = Node(17, 16, "G")
+c = Robot("C", cStart, cGoal)
+print(c)
+robots.append(c)
 
 lab.setRobots(robots)
 
@@ -37,10 +45,27 @@ astar = AStar(lab)
 paths = astar.findAllPaths(robots)
 aPath = paths[0]
 bPath = paths[1]
+cPath = paths[2]
+
+a.setTime()
+b.setTime()
+c.setTime()
+
+coord = Coordination(robots)
+#print(coord.getFirstCollisionNode(a, b))
+'''print(a.time)
+print(b.time)
+print(c.time)'''
+coord.coordinateRobots()
+'''print(a.time)
+print(b.time)
+print(c.time)'''
+
 
 dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
 
 disp= Display(lab,dic)
 
-disp.path(aPath, "red")
-disp.path(bPath, "yellow")
+disp.dispPath(aPath, "red")
+disp.dispPath(bPath, "yellow")
+disp.dispPath(cPath, "purple")

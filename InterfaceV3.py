@@ -19,7 +19,7 @@ class Display:
                     self.can.create_line(c*rempl, 0,c*rempl,self.height)
                     self.can.create_line(0,c*rempl,self.width,c*rempl)
         if dic :
-            print("Dic exists :",dic)
+            #print("Dic exists :",dic)
             self.dic = dic
             for typeN in dic:
                 self.colorType(typeN,dic[typeN])
@@ -40,6 +40,6 @@ class Display:
         txt = self.can.create_text(x, y, text=node.txt, anchor="nw", width=rempl)
         self.can.tag_raise(txt)
 
-    def path(self,path,color):
+    def dispPath(self,path,color):
         for node in path:
             self.node(node, color)
