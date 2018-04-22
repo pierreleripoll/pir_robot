@@ -62,7 +62,7 @@ class Grille:
     def getNode(self,x,y):
         #print("Get Node :",repr(self.plan[y][x]),file=sys.stderr)
         if x < 0 or x >=self.nColumns or y<0 or y>=self.nRows:
-            print("Out of boundary",file=sys.stderr)
+            #print("Out of boundary",file=sys.stderr)
             return
         return self.plan[x][y]
 
