@@ -15,6 +15,13 @@ class Node:
     def changeType(self,typeN):
         self.typeN = typeN
 
+    def rotation(self,node):
+        nodeParent = node.parent
+        if self.x == nodeParent.x or self.y == nodeParent.y :
+            return 0
+        else :
+            return 1
+
     def isObstacle(self):
         if self.typeN == "?" or self.typeN == "#":
             return 1

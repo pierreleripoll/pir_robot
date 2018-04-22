@@ -53,19 +53,22 @@ c.setTime()
 
 coord = Coordination(robots)
 #print(coord.getFirstCollisionNode(a, b))
-'''print(a.time)
+print(a.time)
 print(b.time)
-print(c.time)'''
+print(c.time)
 coord.coordinateRobots()
-'''print(a.time)
+print(a.time)
 print(b.time)
-print(c.time)'''
+print(c.time)
 
 
 dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
 
 disp= Display(lab,dic)
 
-disp.dispPath(aPath, "red")
-disp.dispPath(bPath, "yellow")
-disp.dispPath(cPath, "purple")
+# disp.dispPath(aPath, "red")
+# disp.dispPath(bPath, "yellow")
+# disp.dispPath(cPath, "purple")
+
+disp.can.bind("<Button-1>",Display.showCase)
+disp.can.mainloop()

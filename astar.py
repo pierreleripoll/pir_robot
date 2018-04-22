@@ -31,31 +31,10 @@ class AStar:
 
         list.append(node.copy())
 
-    def returnPath(self,start,goal):
-        path = []
-
-        self.insert(goal,path)
-        findPath = 1
-        '''if goal.typeN == 'S':
-            print("Closed list :",self.closedList,file=sys.stderr)'''
 
 
-        while findPath and path[-1].dist(start)!=1:
-            findPath = 0
-            for i, node in enumerate(self.closedList):
-                if node.dist(path[-1]) == 1:
-                    findPath = 1
-                    self.insert(node,path)
-                    self.closedList.pop(i)
-        if not findPath :
-            return []
-        if goal.typeN=='?':
-            path.pop(0)
-        #print("Path :",list(reversed(path)),file=sys.stderr)
-        return list(reversed(path))
 
-
-    def returnPath2(self,node):
+    def returnPath(self,node):
         path = [node]
         #print("returnPath2 in use")
         while node.parent :
@@ -85,7 +64,7 @@ class AStar:
 
         #print("Closed list :",self.closedList," goal :",repr(goal),file=sys.stderr)
 
-        return self.returnPath2(goal)
+        return self.returnPath(goal)
 
     def treat(self,node,goal):
 
@@ -98,7 +77,7 @@ class AStar:
         #print("neighbors :",neighbors,file=sys.stderr)
         for n in neighbors:
             n.setParent(node)
-            self.addNodeToOpenList(n.copy(),goal,node.cout)
+            self.addNodeToOpenList(n.copy(),goal,node)
 
 
         self.openList.pop(0)
@@ -115,9 +94,9 @@ class AStar:
         return 1
 
 
-    def addNodeToOpenList(self,node,goal,cout=0):
-        node.cout = cout+1
-        node.h = cout + node.dist(goal)
+    def addNodeToOpenList(self,node,goal,nodeParent):
+        node.cout = nodeParent.cout+1
+        node.h = cout + node.dist(goal) + node.rotation(nodeParent)
         if not self.alreadyBestIn(node,self.closedList):
             self.insert(node,self.openList)
 

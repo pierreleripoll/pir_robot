@@ -30,15 +30,20 @@ class Display:
                 if node.typeN == typeN:
                     self.node(node,color)
 
+    def showCase(event):
+        xm , ym = event.x , event.y
+        print("Mouse at x=%d,y=%d" % (xm,ym))
+
     def node(self,node, color):
         rempl=self.height/self.boxesPerRow
         x=node.x*rempl
         y=node.y*rempl
-        if node.typeN == "S" or node.typeN == "G" :
-            color = self.dic[node.typeN]
+        color = self.dic[node.typeN]
         rect = self.can.create_rectangle(x,y,x+rempl,y+rempl,fill=color)
-        txt = self.can.create_text(x, y, text=node.txt, anchor="nw", width=rempl)
-        self.can.tag_raise(txt)
+        if node.typeN == "S" or node.typeN == "G" :
+            txt = self.can.create_text(x+rempl/2, y+rempl/2,fill="white",activefill="yellow", text=node.txt,  width=rempl)
+            self.can.tag_raise(txt)
+
 
     def dispPath(self,path,color):
         for node in path:
