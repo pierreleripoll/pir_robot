@@ -7,32 +7,32 @@ from coordination import Coordination
 
 from InterfaceV3 import *
 
-lab = Grille(30,30)
-lab.setRect(15,15,10,2,".")
-lab.setRect(15,15,2,10,".");
-lab.setRect(20,15,2,10,".")
-lab.setRect(15,22,10,2,".")
+lab = Grille(20,20)
+lab.setRect(5,5,10,2,".")
+lab.setRect(5,5,2,10,".");
+lab.setRect(10,5,2,10,".")
+lab.setRect(5,12,10,2,".")
 
 # Liste des robots
 robots = []
 
 # Robot A
-aStart = Node(18,22,"S")
-aGoal = Node(23, 22,"G")
+aStart = Node(8,12,"S")
+aGoal = Node(13, 12,"G")
 a = Robot("A", aStart, aGoal)
 print(a)
 robots.append(a)
 
 # Robot B
-bStart = Node(21, 19, "S")
-bGoal = Node(21, 24, "G")
+bStart = Node(11, 9, "S")
+bGoal = Node(11, 14, "G")
 b = Robot("B", bStart, bGoal)
 print(b)
 robots.append(b)
 
 # Robot C
-cStart = Node(20, 24, "S")
-cGoal = Node(17, 16, "G")
+cStart = Node(10, 14, "S")
+cGoal = Node(7, 6, "G")
 c = Robot("C", cStart, cGoal)
 print(c)
 robots.append(c)
