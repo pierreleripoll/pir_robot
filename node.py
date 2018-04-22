@@ -17,10 +17,13 @@ class Node:
 
     def rotation(self,node):
         nodeParent = node.parent
-        if self.x == nodeParent.x or self.y == nodeParent.y :
-            return 0
+        if nodeParent :
+            if self.x == nodeParent.x or self.y == nodeParent.y :
+                return 0
+            else :
+                return 1
         else :
-            return 1
+            return 0
 
     def isObstacle(self):
         if self.typeN == "?" or self.typeN == "#":

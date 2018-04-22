@@ -94,9 +94,12 @@ class AStar:
         return 1
 
 
-    def addNodeToOpenList(self,node,goal,nodeParent):
-        node.cout = nodeParent.cout+1
-        node.h = cout + node.dist(goal) + node.rotation(nodeParent)
+    def addNodeToOpenList(self,node,goal,nodeParent = None):
+        if nodeParent:
+            node.cout = nodeParent.cout+1 + node.rotation(nodeParent)
+        else :
+            node.cout = 1
+        node.h = node.cout + node.dist(goal)
         if not self.alreadyBestIn(node,self.closedList):
             self.insert(node,self.openList)
 

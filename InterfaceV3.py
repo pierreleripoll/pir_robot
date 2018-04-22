@@ -6,8 +6,8 @@ class Display:
 
     def __init__(self,grille,dic = None):
         self.boxesPerRow=grille.nRows
-        self.height=512
-        self.width=512
+        self.height=1024
+        self.width=1024
         rempl=self.height/self.boxesPerRow
         self.grille = grille
         self.window=Tk()
