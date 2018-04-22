@@ -6,8 +6,8 @@ class Display:
 
     def __init__(self,grille,dic = None):
         self.boxesPerRow=grille.nRows
-        self.height=1024
-        self.width=1024
+        self.height=700
+        self.width=700
         rempl=self.height/self.boxesPerRow
         self.grille = grille
         self.window=Tk()
@@ -15,6 +15,8 @@ class Display:
         self.can.pack()
         self.bstop=Button(self.window, text='Fermer la fenêtre', command=self.window.destroy)
         self.bstop.pack()
+        self.can.bind("<Button-1>",self.showCase)
+
         for c in range(self.boxesPerRow):
                     self.can.create_line(c*rempl, 0,c*rempl,self.height)
                     self.can.create_line(0,c*rempl,self.width,c*rempl)
@@ -30,9 +32,13 @@ class Display:
                 if node.typeN == typeN:
                     self.node(node,color)
 
-    def showCase(event):
+    def showCase(self,event):
+        rempl = self.height/self.boxesPerRow
         xm , ym = event.x , event.y
         print("Mouse at x=%d,y=%d" % (xm,ym))
+        xc , yc = int(xm/rempl) , int(ym/rempl)
+
+        print("Case :",repr(self.grille.getNode(xc,yc)))
 
     def node(self,node, color):
         rempl=self.height/self.boxesPerRow

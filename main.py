@@ -70,5 +70,5 @@ disp= Display(lab,dic)
 # disp.dispPath(bPath, "yellow")
 # disp.dispPath(cPath, "purple")
 
-disp.can.bind("<Button-1>",Display.showCase)
+
 disp.can.mainloop()
