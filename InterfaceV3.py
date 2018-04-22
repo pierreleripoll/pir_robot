@@ -15,7 +15,9 @@ class Display:
         self.can.pack()
         self.bstop=Button(self.window, text='Fermer la fenêtre', command=self.window.destroy)
         self.bstop.pack()
+        self.chaine = Label(self.window)
         self.can.bind("<Motion>",self.showCase)
+        self.chaine.pack()
 
         for c in range(self.boxesPerRow):
                     self.can.create_line(c*rempl, 0,c*rempl,self.height)
@@ -34,9 +36,8 @@ class Display:
 
     def showCase(self,event):
         rempl = self.height/self.boxesPerRow
-        chaine.configure(text = "X =" + str(event.x) +", Y =" + str(event.y))
-        xc , yc = int(xm/rempl) , int(ym/rempl)
-
+        self.chaine.configure(text = "X =" + str(event.x) +", Y =" + str(event.y))
+        xc , yc = int(event.x/rempl) , int(event.y/rempl)
         print("Case :",repr(self.grille.getNode(xc,yc)))
 
     def node(self,node, color):
