@@ -38,8 +38,8 @@ class Display:
         rempl = self.height/self.boxesPerRow
 
         xc , yc = int(event.x/rempl) , int(event.y/rempl)
-        print("Case :",repr(self.grille.getNode(xc,yc)))
-        self.chaine.configure(text = "Case :",repr(self.grille.getNode(xc,yc)))
+        #print("Case :",repr(self.grille.getNode(xc,yc)))
+        self.chaine.configure(text = "Case :"+ repr(self.grille.getNode(xc,yc)))
 
     def node(self,node, color):
         rempl=self.height/self.boxesPerRow
