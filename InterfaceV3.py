@@ -43,17 +43,19 @@ class Display:
         if node:
             self.chaine.configure(text = "Case :"+ repr(node))
 
-    def node(self,node, color):
+    def node(self,node, color = None):
         rempl=self.height/self.boxesPerRow
         x=node.x*rempl
         y=node.y*rempl
-        color = self.dic[node.typeN]
+        if not color :
+            color = self.dic[node.typeN]
         rect = self.can.create_rectangle(x,y,x+rempl,y+rempl,fill=color)
+        #print("Disp ",node," ",color,"x ",x," y ",y," rempl ",rempl)
         if node.typeN == "S" or node.typeN == "G" :
             txt = self.can.create_text(x+rempl/2, y+rempl/2,fill="white",activefill="yellow", text=node.txt,  width=rempl)
             self.can.tag_raise(txt)
 
 
-    def dispPath(self,path,color):
+    def dispPath(self,path,color,):
         for node in path:
             self.node(node, color)
