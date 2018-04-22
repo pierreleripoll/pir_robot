@@ -36,9 +36,10 @@ class Display:
 
     def showCase(self,event):
         rempl = self.height/self.boxesPerRow
-        self.chaine.configure(text = "X =" + str(event.x) +", Y =" + str(event.y))
+
         xc , yc = int(event.x/rempl) , int(event.y/rempl)
         print("Case :",repr(self.grille.getNode(xc,yc)))
+        self.chaine.configure(text = "Case :",repr(self.grille.getNode(xc,yc)))
 
     def node(self,node, color):
         rempl=self.height/self.boxesPerRow

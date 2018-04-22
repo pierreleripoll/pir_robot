@@ -66,9 +66,6 @@ dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
 
 disp= Display(lab,dic)
 
-# disp.dispPath(aPath, "red")
-# disp.dispPath(bPath, "yellow")
-# disp.dispPath(cPath, "purple")
-
-
-disp.can.mainloop()
+disp.dispPath(aPath, "red")
+disp.dispPath(bPath, "yellow")
+disp.dispPath(cPath, "purple")
