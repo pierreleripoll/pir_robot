@@ -47,14 +47,21 @@ class Display:
         rempl=self.height/self.boxesPerRow
         x=node.x*rempl
         y=node.y*rempl
-        if not color :
-            color = self.dic[node.typeN]
-        rect = self.can.create_rectangle(x,y,x+rempl,y+rempl,fill=color)
+
         #print("Disp ",node," ",color,"x ",x," y ",y," rempl ",rempl)
         if node.typeN == "S" or node.typeN == "G" :
-            txt = self.can.create_text(x+rempl/2, y+rempl/2,fill="white",activefill="yellow", text=node.txt,  width=rempl)
-            self.can.tag_raise(txt)
+            color = self.dic[node.typeN]
 
+
+        rect = self.can.create_rectangle(x,y,x+rempl,y+rempl,fill=color)
+        txt = self.can.create_text(x+rempl/2, y+rempl/2,fill="white",activefill="yellow", text=node.txt,  width=rempl)
+        self.can.tag_raise(txt)
+
+
+
+    def reset(self):
+        for typeN in self.dic:
+            self.colorType(typeN,self.dic[typeN])
 
     def dispPath(self,path,color,):
         for node in path:
