@@ -59,6 +59,7 @@ class AStar:
             #if goal.typeN=='T':
                 #print("closedList :",self.closedList,file=sys.stderr)
             self.openList.sort(key=h)
+            print(self.openList)
 
             notFinish = self.treat(self.openList[0],goal)
 
@@ -104,6 +105,7 @@ class AStar:
         else :
             node.cout = 1
         node.h = node.cout + node.dist(goal)
+        print(repr(node),"cout :",node.cout," <-",repr(node.parent))
         if not self.alreadyBestIn(node,self.closedList):
             self.insert(node,self.openList)
 

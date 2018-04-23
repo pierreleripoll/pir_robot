@@ -9,7 +9,7 @@ class Node:
         self.typeN = typeN
         self.txt = txt # texte à afficher le cas échéant
         self.cout = 0
-        self.h = 0 # heuristique
+        self.h = math.inf # heuristique
         self.parent = None;
 
     def changeType(self,typeN):
@@ -44,7 +44,7 @@ class Node:
         return returnV
 
     def __repr__(self):
-        return str(self.x)+","+str(self.y)+":"+str(self.typeN)+",h"+str(self.h)+" P:"+str(self.parent)
+        return str(self.x)+","+str(self.y)+":"+str(self.typeN)+",h"+str(self.h)
 
     def __str__(self):
         return str(self.typeN)
