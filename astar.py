@@ -96,7 +96,11 @@ class AStar:
 
     def addNodeToOpenList(self,node,goal,nodeParent = None):
         if nodeParent:
-            node.cout = nodeParent.cout+1 + node.rotation(nodeParent)
+            node.cout = nodeParent.cout+1 + 20*node.rotation(nodeParent)
+            #print(nodeParent.cout," -> ",node.cout)
+            if node.rotation(nodeParent) :
+                pass
+                #print(repr(node)," parent :",repr(nodeParent))
         else :
             node.cout = 1
         node.h = node.cout + node.dist(goal)

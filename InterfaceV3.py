@@ -63,6 +63,6 @@ class Display:
         for typeN in self.dic:
             self.colorType(typeN,self.dic[typeN])
 
-    def dispPath(self,path,color,):
+    def showPath(self,path,color,):
         for node in path:
             self.node(node, color)

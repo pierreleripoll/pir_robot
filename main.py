@@ -13,6 +13,7 @@ lab.setRect(5,5,2,10,".");
 lab.setRect(10,5,2,10,".")
 lab.setRect(5,12,10,2,".")
 
+#lab.chgNode(11,12,"?")
 # Liste des robots
 robots = []
 
@@ -66,6 +67,6 @@ dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
 
 disp= Display(lab,dic)
 
-disp.dispPath(aPath, "red")
-disp.dispPath(bPath, "yellow")
-disp.dispPath(cPath, "purple")
+#disp.showPath(aPath, "red")
+#disp.showPath(bPath, "yellow")
+#disp.showPath(cPath, "purple")
