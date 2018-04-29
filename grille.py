@@ -4,7 +4,7 @@ import math
 
 
 
-from node import Node
+from cell import Cell
 
 class Grille:
 
@@ -17,27 +17,27 @@ class Grille:
         for i in range(c):
             self.plan.append([])
             for j in range(r):
-                self.plan[i].append(Node(i,j))
+                self.plan[i].append(Cell(i,j))
 
-    def chgNode(self,x,y,typeN):
-        self.plan[x][y].changeType(typeN)
+    def chgCell(self,x,y,typeC):
+        self.plan[x][y].changeType(typeC)
 
 
-    def findNeighbors(self,node, obstacle = "false",range = 1):
+    def findNeighbors(self,cell, obstacle = "false",range = 1):
         neighbors = []
-        X = node.x
-        Y = node.y
+        X = cell.x
+        Y = cell.y
 
-        neighbor = self.getNode(X+range,Y)
+        neighbor = self.getCell(X+range,Y)
         if not neighbor.isObstacle() or obstacle=="true":
             neighbors.append(neighbor)
-        neighbor = self.getNode(X,Y+range)
+        neighbor = self.getCell(X,Y+range)
         if not neighbor.isObstacle()or obstacle=="true":
             neighbors.append(neighbor)
-        neighbor = self.getNode(X-range,Y)
+        neighbor = self.getCell(X-range,Y)
         if not neighbor.isObstacle()or obstacle=="true":
             neighbors.append(neighbor)
-        neighbor = self.getNode(X,Y-range)
+        neighbor = self.getCell(X,Y-range)
         if not neighbor.isObstacle()or obstacle=="true":
             neighbors.append(neighbor)
 
@@ -48,25 +48,25 @@ class Grille:
         square= []
 
         for i in range(2*l+1):
-            square.append(self.getNode(pos.x-l+i,pos.y-l).copy())
-            square.append(self.getNode(pos.x-l+i,pos.y+l).copy())
+            square.append(self.getCell(pos.x-l+i,pos.y-l).copy())
+            square.append(self.getCell(pos.x-l+i,pos.y+l).copy())
 
         for i in range(2*(l-1)+2):
-            square.append(self.getNode(pos.x-l,pos.y-l+i).copy())
-            square.append(self.getNode(pos.x+l,pos.y-l+i).copy())
+            square.append(self.getCell(pos.x-l,pos.y-l+i).copy())
+            square.append(self.getCell(pos.x+l,pos.y-l+i).copy())
 
-        #sorted(square, key= lambda Node: Node.dist(pos))
+        #sorted(square, key= lambda Cell: Cell.dist(pos))
         return square
 
 
-    def getNode(self,x,y):
-        #print("Get Node :",repr(self.plan[y][x]),file=sys.stderr)
+    def getCell(self,x,y):
+        #print("Get Cell :",repr(self.plan[y][x]),file=sys.stderr)
         if x < 0 or x >=self.nColumns or y<0 or y>=self.nRows:
             #print("Out of boundary",file=sys.stderr)
             return
         return self.plan[x][y]
 
-    def resetNodes(self):
+    def resetCells(self):
         for r in self.plan:
             for c in r:
                 c.reset()
@@ -76,36 +76,36 @@ class Grille:
 
     def chgRow(self,i,row):
         #print("New row : ",row,file=sys.stderr)
-        for j,typeN in enumerate(row):
-            self.chgNode(j,i,typeN)
+        for j,typeC in enumerate(row):
+            self.chgCell(j,i,typeC)
 
-    def setNode(self,node):
-        self.plan[node.x][node.y] = node
+    def setCell(self,cell):
+        self.plan[cell.x][cell.y] = cell
 
-    def setPath(self,path, typeN = "*"):
-        for node in path:
-            node.changeType(typeN)
-            self.setNode(node)
+    def setPath(self,path, typeC = "*"):
+        for cell in path:
+            cell.changeType(typeC)
+            self.setCell(cell)
 
-    def setRect(self,x,y,width,height,typeN):
+    def setRect(self,x,y,width,height,typeC):
         for i,column in enumerate(self.plan[x:x+width]):
             for j in range(y,y+height):
-                self.chgNode(i+x,j,typeN)
+                self.chgCell(i+x,j,typeC)
 
     # Initialise la liste des robots et set les noeuds start et goal de chacun
     def setRobots(self, robots) :
         for i in range(len(robots)) :
             self.robots.append(robots[i])
-            self.setNode(self.robots[i].start)
-            self.setNode(self.robots[i].goal)
+            self.setCell(self.robots[i].start)
+            self.setCell(self.robots[i].goal)
 
     def __repr__(self):
         toPrint = []
         for j in range(self.nRows):
             toPrint.append("")
         for column in self.plan:
-            for i,node in enumerate(column):
-                    toPrint[i] += str(node)+" "
+            for i,cell in enumerate(column):
+                    toPrint[i] += str(cell)+" "
 
         returnPrint  ="  "
 

@@ -4,3 +4,5 @@
   obstacle pour les autres robots.
 
 - Afficher les coordonnées d'un noeud lorsqu'on passe la souris dessus.
+
+- Mettre des noeuds différentes

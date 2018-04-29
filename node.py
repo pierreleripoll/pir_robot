@@ -3,17 +3,13 @@ import math
 
 class Node:
 
-    def __init__(self,x,y,typeN = '?', txt=None):
-        self.x = x
-        self.y = y
-        self.typeN = typeN
-        self.txt = txt # texte à afficher le cas échéant
+    def __init__(self,cell,dir):
+        self.dir = dir
+        self.cell = cell
         self.cout = 0
         self.h = math.inf # heuristique
         self.parent = None;
 
-    def changeType(self,typeN):
-        self.typeN = typeN
 
     def rotation(self,node):
         nodeParent = node.parent
@@ -35,7 +31,7 @@ class Node:
         self.parent = node
 
     def copy(self):
-        returnV = Node(self.x,self.y)
+        returnV = Node(self.x,self.y,self.dir)
         returnV.typeN = self.typeN
         returnV.h = self.h
         returnV.cout = self.cout
