@@ -8,14 +8,14 @@ from grille import Grille
 class AStar:
     def __init__(self,lab):
         self.lab = lab
-        self.lab.resetNodes()
+        self.lab.resetCells()
         self.openList = []
         self.closedList = []
 
 
     def alreadyBestIn(self,node,list):
         for n in list:
-            if n.x == node.x and n.y == node.y:
+            if n.equals(node):
                 if node.cout >= n.cout:
                     return 1
         return 0
@@ -23,7 +23,7 @@ class AStar:
 
     def insert(self,node,list):
         for n in list:
-            if node.dist(n)==0:
+            if node.equals(n):
                 if node.cout < n.cout:
                     n=node.copy()
                 else:
@@ -36,15 +36,16 @@ class AStar:
 
     def returnPath(self,node):
         path = [node]
-        #print("returnPath2 in use")
+        print("returnPath in use")
         while node.parent :
+            print(repr(node.parent))
             path.append(node.parent)
             node = node.parent
         #print(repr(list(reversed(path))))
         return list(reversed(path))
 
     def findPath(self,start,goal):
-        self.lab.resetNodes()
+        self.lab.resetCells()
         self.openList.clear()
         self.closedList.clear()
         self.addNodeToOpenList(start.copy(),goal)
@@ -59,13 +60,16 @@ class AStar:
             #if goal.typeN=='T':
                 #print("closedList :",self.closedList,file=sys.stderr)
             self.openList.sort(key=h)
-            print(self.openList)
+            print("OPEN LIST : "+str(self.openList)+"\n")
+            print("CLOSED LIST : "+str(self.closedList)+"\n")
 
             notFinish = self.treat(self.openList[0],goal)
 
-        #print("Closed list :",self.closedList," goal :",repr(goal),file=sys.stderr)
+        print("Closed list :",self.closedList," goal :",repr(goal),file=sys.stderr)
+        for node in self.closedList :
+            if node.dist(goal) == 0:
+                return self.returnPath(node)
 
-        return self.returnPath(goal)
 
     def treat(self,node,goal):
 
@@ -88,7 +92,7 @@ class AStar:
         if node.dist(goal) == 0:
             #print("Goal found, node.dist(goal)=0",file=sys.stderr)
             return 0
-        if goal.typeN == '?' and node.dist(goal)==1:
+        if goal.cell.typeC == '?' and node.dist(goal)==1:
             #print("Goal found",file=sys.stderr)
             return 0
 
@@ -97,11 +101,11 @@ class AStar:
 
     def addNodeToOpenList(self,node,goal,nodeParent = None):
         if nodeParent:
-            node.cout = nodeParent.cout+1 + 20*node.rotation(nodeParent)
-            #print(nodeParent.cout," -> ",node.cout)
-            if node.rotation(nodeParent) :
-                pass
-                #print(repr(node)," parent :",repr(nodeParent))
+            if node.parent.dir == node.dir :
+                node.cout = nodeParent.cout+1
+            if nodeParent.dir != node.dir :
+                node.cout = nodeParent.cout+2
+
         else :
             node.cout = 1
         node.h = node.cout + node.dist(goal)

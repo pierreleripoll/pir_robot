@@ -17,6 +17,7 @@ class Cell:
 
     def isObstacle(self):
         if self.typeC == "?" or self.typeC == "#":
+            print("Cell ",self.x,",",self.y," is obstacle")
             return 1
         else:
             return 0

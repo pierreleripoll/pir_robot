@@ -25,44 +25,44 @@ class Display:
         if dic :
             #print("Dic exists :",dic)
             self.dic = dic
-            for typeN in dic:
-                self.colorType(typeN,dic[typeN])
+            for typeC in dic:
+                self.colorType(typeC,dic[typeC])
 
-    def colorType(self,typeN,color):
+    def colorType(self,typeC,color):
         for column in self.grille.plan:
-            for node in column:
-                if node.typeN == typeN:
-                    self.node(node,color)
+            for cell in column:
+                if cell.typeC == typeC:
+                    self.cell(cell,color)
 
     def showCase(self,event):
         rempl = self.height/self.boxesPerRow
 
         xc , yc = int(event.x/rempl) , int(event.y/rempl)
-        #print("Case :",repr(self.grille.getNode(xc,yc)))
-        node = self.grille.getNode(xc,yc)
-        if node:
-            self.chaine.configure(text = "Case :"+ repr(node))
+        #print("Case :",repr(self.grille.getCell(xc,yc)))
+        cell = self.grille.getCell(xc,yc)
+        if cell:
+            self.chaine.configure(text = "Case :"+ repr(cell))
 
-    def node(self,node, color = None):
+    def cell(self,cell, color = None):
         rempl=self.height/self.boxesPerRow
-        x=node.x*rempl
-        y=node.y*rempl
+        x=cell.x*rempl
+        y=cell.y*rempl
 
-        #print("Disp ",node," ",color,"x ",x," y ",y," rempl ",rempl)
-        if node.typeN == "S" or node.typeN == "G" :
-            color = self.dic[node.typeN]
+        #print("Disp ",cell," ",color,"x ",x," y ",y," rempl ",rempl)
+        if cell.typeC == "S" or cell.typeC == "G" :
+            color = self.dic[cell.typeC]
 
 
         rect = self.can.create_rectangle(x,y,x+rempl,y+rempl,fill=color)
-        txt = self.can.create_text(x+rempl/2, y+rempl/2,fill="white",activefill="yellow", text=node.txt,  width=rempl)
+        txt = self.can.create_text(x+rempl/2, y+rempl/2,fill="white",activefill="yellow", text=cell.txt,  width=rempl)
         self.can.tag_raise(txt)
 
 
 
     def reset(self):
-        for typeN in self.dic:
-            self.colorType(typeN,self.dic[typeN])
+        for typeC in self.dic:
+            self.colorType(typeC,self.dic[typeC])
 
     def showPath(self,path,color,):
         for node in path:
-            self.node(node, color)
+            self.cell(node.cell, color)

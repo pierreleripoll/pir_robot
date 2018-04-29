@@ -3,56 +3,52 @@ import math
 
 class Node:
 
+    DIRECTIONS = ["U","R","D","L"]
+
     def __init__(self,cell,dir):
         self.dir = dir
         self.cell = cell
         self.cout = 0
+        self.x = cell.x
+        self.y = cell.y
         self.h = math.inf # heuristique
         self.parent = None;
 
 
-    def rotation(self,node):
-        nodeParent = node.parent
-        if nodeParent :
-            if self.x == nodeParent.x or self.y == nodeParent.y :
-                return 0
-            else :
-                return 1
+    def equals(self,node):
+        if self.cell.isSame(node.cell) and self.dir == node.dir :
+            return 1
         else :
             return 0
 
     def isObstacle(self):
-        if self.typeN == "?" or self.typeN == "#":
-            return 1
-        else:
-            return 0
+    #    print("Appel isObstacle")
+        return self.cell.isObstacle()
 
     def setParent(self,node):
         self.parent = node
 
+    def dist(self,node):
+        return self.cell.dist(node.cell)
+
     def copy(self):
-        returnV = Node(self.x,self.y,self.dir)
-        returnV.typeN = self.typeN
+        returnV = Node(self.cell,self.dir)
+        returnV.x = self.x
+        returnV.y = self.y
         returnV.h = self.h
         returnV.cout = self.cout
         returnV.parent = self.parent
-        returnV.txt = self.txt
         return returnV
 
     def __repr__(self):
-        return str(self.x)+","+str(self.y)+":"+str(self.typeN)+",h"+str(self.h)
+        return repr(self.cell)+","+self.dir+",h"+str(self.h)
 
     def __str__(self):
         return str(self.typeN)
 
-    def dist(self,node2):
-        dx = abs(node2.x-self.x)
-        dy = abs(node2.y-self.y)
-        dist=dx+dy
 
-        return dist
 
     def reset(self):
         self.cout = 0
-        self.h= 0
+        self.h= math.inf
         self.parent = None

@@ -5,6 +5,7 @@ import math
 
 
 from cell import Cell
+from node import Node
 
 class Grille:
 
@@ -23,40 +24,32 @@ class Grille:
         self.plan[x][y].changeType(typeC)
 
 
-    def findNeighbors(self,cell, obstacle = "false",range = 1):
-        neighbors = []
-        X = cell.x
-        Y = cell.y
+    def findNeighbors(self,node):
 
-        neighbor = self.getCell(X+range,Y)
-        if not neighbor.isObstacle() or obstacle=="true":
-            neighbors.append(neighbor)
-        neighbor = self.getCell(X,Y+range)
-        if not neighbor.isObstacle()or obstacle=="true":
-            neighbors.append(neighbor)
-        neighbor = self.getCell(X-range,Y)
-        if not neighbor.isObstacle()or obstacle=="true":
-            neighbors.append(neighbor)
-        neighbor = self.getCell(X,Y-range)
-        if not neighbor.isObstacle()or obstacle=="true":
-            neighbors.append(neighbor)
+        possiblesNodes = []
 
-        return neighbors
+        X = node.cell.x
+        Y = node.cell.y
+
+        if node.dir == "L":
+            X -= 1
+        if node.dir == "R":
+            X +=1
+        if node.dir == "U":
+            Y -= 1
+        if node.dir == "D":
+            Y += 1
+
+        possibleNode = Node(self.getCell(X,Y),node.dir)
+        if not possibleNode.isObstacle() :
+            possiblesNodes.append(possibleNode)
+        for direction in Node.DIRECTIONS :
+            if node.dir != direction :
+                possibleNode = Node(node.cell.copy(),direction)
+                possiblesNodes.append(possibleNode)
+        return possiblesNodes
 
 
-    def getSquare(self,pos,l = 0):
-        square= []
-
-        for i in range(2*l+1):
-            square.append(self.getCell(pos.x-l+i,pos.y-l).copy())
-            square.append(self.getCell(pos.x-l+i,pos.y+l).copy())
-
-        for i in range(2*(l-1)+2):
-            square.append(self.getCell(pos.x-l,pos.y-l+i).copy())
-            square.append(self.getCell(pos.x+l,pos.y-l+i).copy())
-
-        #sorted(square, key= lambda Cell: Cell.dist(pos))
-        return square
 
 
     def getCell(self,x,y):
