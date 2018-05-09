@@ -8,20 +8,20 @@ class Display:
         self.boxesPerRow=grille.nRows
         self.height=700
         self.width=700
-        rempl=self.height/self.boxesPerRow
+        self.boxSide=self.height/self.boxesPerRow
         self.grille = grille
         self.window=Tk()
         self.can=Canvas(self.window, width=self.width, height=self.height, bg='ivory')
         self.can.pack()
         self.bstop=Button(self.window, text='Fermer la fenêtre', command=self.window.destroy)
         self.bstop.pack()
-        self.chaine = Label(self.window)
+        self.chain = Label(self.window)
         self.can.bind("<Motion>",self.showBox)
-        self.chaine.pack()
+        self.chain.pack()
 
         for c in range(self.boxesPerRow):
-                    self.can.create_line(c*rempl, 0,c*rempl,self.height)
-                    self.can.create_line(0,c*rempl,self.width,c*rempl)
+                    self.can.create_line(c*self.boxSide, 0,c*self.boxSide,self.height)
+                    self.can.create_line(0,c*self.boxSide,self.width,c*self.boxSide)
         if dic :
             #print("Dic exists :",dic)
             self.dic = dic
@@ -35,25 +35,22 @@ class Display:
                     self.cell(cell,color)
 
     def showBox(self,event):
-        rempl = self.height/self.boxesPerRow
-
-        xc , yc = int(event.x/rempl) , int(event.y/rempl)
+        xc , yc = int(event.x/self.boxSide) , int(event.y/self.boxSide)
         #print("Box :",repr(self.grille.getCell(xc,yc)))
         cell = self.grille.getCell(xc,yc)
         if cell:
-            self.chaine.configure(text = "Box :"+ repr(cell))
+            self.chain.configure(text = "Box :"+ repr(cell))
 
     def cell(self,cell, color = None):
-        rempl=self.height/self.boxesPerRow
-        x=cell.x*rempl
-        y=cell.y*rempl
+        x=cell.x*self.boxSide
+        y=cell.y*self.boxSide
 
-        #print("Disp ",cell," ",color,"x ",x," y ",y," rempl ",rempl)
+        #print("Disp ",cell," ",color,"x ",x," y ",y," self.boxSide ",self.boxSide)
         if cell.typeC == "S" or cell.typeC == "G" :
             color = self.dic[cell.typeC]
 
-        rect = self.can.create_rectangle(x,y,x+rempl,y+rempl,fill=color)
-        txt = self.can.create_text(x+rempl/2, y+rempl/2,fill="white",activefill="yellow", text=cell.txt,  width=rempl)
+        rect = self.can.create_rectangle(x,y,x+self.boxSide,y+self.boxSide,fill=color)
+        txt = self.can.create_text(x+self.boxSide/2, y+self.boxSide/2,fill="white",activefill="yellow", text=cell.txt,  width=self.boxSide)
         self.can.tag_raise(txt)
 
 

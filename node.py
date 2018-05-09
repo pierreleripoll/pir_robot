@@ -30,10 +30,7 @@ class Node(Cell):
         return returnV
 
     def __repr__(self):
-        return repr(self)+","+self.dir+",h"+str(self.h)
-
-    def __str__(self):
-        return str(self.typeN)
+        return "("+str(self.x)+","+str(self.y)+","+str(self.typeC)+")"+","+self.dir+",h"+str(self.h)
 
 
 
