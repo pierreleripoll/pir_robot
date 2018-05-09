@@ -1,7 +1,7 @@
 
 import math
 
-class Node:
+class Node(Cell):
 
     DIRECTIONS = ["U","R","D","L"]
 

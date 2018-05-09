@@ -15,7 +15,7 @@ lab.setRect(10,5,2,10,".")
 lab.setRect(5,12,10,2,".")
 
 lab.setCell(Cell(10,12,"?"))
-
+lab.setCell(Cell(12,13,"?"))
 
 # Liste des robots
 
