@@ -28,8 +28,8 @@ class Grille:
 
         possiblesNodes = []
 
-        X = node.cell.x
-        Y = node.cell.y
+        X = node.x
+        Y = node.y
 
         if node.dir == "L":
             X -= 1
@@ -45,12 +45,9 @@ class Grille:
             possiblesNodes.append(possibleNode)
         for direction in Node.DIRECTIONS :
             if node.dir != direction :
-                possibleNode = Node(node.cell.copy(),direction)
+                possibleNode = Node(node.copy(),direction)
                 possiblesNodes.append(possibleNode)
         return possiblesNodes
-
-
-
 
     def getCell(self,x,y):
         #print("Get Cell :",repr(self.plan[y][x]),file=sys.stderr)
@@ -59,14 +56,6 @@ class Grille:
             return
         return self.plan[x][y]
 
-    def resetCells(self):
-        for r in self.plan:
-            for c in r:
-                c.reset()
-
-
-
-
     def chgRow(self,i,row):
         #print("New row : ",row,file=sys.stderr)
         for j,typeC in enumerate(row):
@@ -74,11 +63,6 @@ class Grille:
 
     def setCell(self,cell):
         self.plan[cell.x][cell.y] = cell
-
-    def setPath(self,path, typeC = "*"):
-        for cell in path:
-            cell.changeType(typeC)
-            self.setCell(cell)
 
     def setRect(self,x,y,width,height,typeC):
         for i,column in enumerate(self.plan[x:x+width]):

@@ -9,15 +9,15 @@ class Coordination :
 
     # Renvoie le robot le plus prioritaire des 2 donnés en paramètre,
     # lorsqu'ils vont collisionner au noeud node
-    def getWorstRobot(self, robot1, robot2, node) :
+    def getBestRobot(self, robot1, robot2, node) :
         # Pour l'instant, arbitrairement, le critère de choix est la distance
         # euclidienne au noeud goal
         dist1 = node.dist(robot1.goal)
         dist2 = node.dist(robot2.goal)
         if(dist1 <= dist2) :
-            return robot2
-        else :
             return robot1
+        else :
+            return robot2
 
     # Renvoie le noeud où a lieu la 1ère collision entre 2 robots le cas échéant
     def getFirstCollisionNode(self, robot1, robot2) :
@@ -37,7 +37,7 @@ class Coordination :
                     collNode = self.getFirstCollisionNode(self.robots[i], self.robots[j])
                     if(collNode != None) :
                         collisionsCounter += 1
-                        worstRobot = self.getWorstRobot(self.robots[i], self.robots[j], collNode)
-                        worstRobot.wait(collNode, 10)
+                        bestRobot = self.getBestRobot(self.robots[i], self.robots[j], collNode)
+                        bestRobot.wait(collNode, 10)
         if(collisionsCounter != 0) :
             self.coordinateRobots()

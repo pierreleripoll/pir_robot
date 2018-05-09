@@ -3,7 +3,7 @@ import math
 
 class Cell:
 
-    def __init__(self,x,y, typeC = '?', txt=None):
+    def __init__(self, x, y, typeC = '?', txt=None):
         self.x = x
         self.y = y
         self.typeC = typeC
@@ -17,7 +17,7 @@ class Cell:
 
     def isObstacle(self):
         if self.typeC == "?" or self.typeC == "#":
-            print("Cell ",self.x,",",self.y," is obstacle")
+            #print("Cell ",self.x,",",self.y," is obstacle")
             return 1
         else:
             return 0
@@ -44,10 +44,4 @@ class Cell:
         dx = abs(cell2.x-self.x)
         dy = abs(cell2.y-self.y)
         dist=dx+dy
-
         return dist
-
-    def reset(self):
-        self.cout = 0
-        self.h= 0
-        self.parent = None

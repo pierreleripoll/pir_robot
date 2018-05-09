@@ -30,7 +30,10 @@ astar = AStar(lab)
 
 # Liste des chemins des robots
 aPath = astar.findPath(aStart,aGoal)
-
+print("------ aPath ------")
+for node in aPath :
+    print(node.typeC)
+print("-------------------")
 
 
 
