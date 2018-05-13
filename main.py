@@ -19,7 +19,8 @@ lab.setCell(Cell(12,13,"?"))
 
 # Liste des robots
 robots = []
-
+#Liste des chemins
+pathes=[]
 # Robot A
 aStart = Node(Cell(8, 12,"S"),"L")
 aGoal = Node(Cell(13, 12,"G"),"L")
@@ -39,10 +40,13 @@ astar = AStar(lab)
 
 # Liste des chemins des robots
 aPath = astar.findPath(aStart,aGoal)
+pathes.append(aPath)
 a.path = aPath
+
 a.setTime()
 bPath = astar.findPath(bStart,bGoal)
 b.path = bPath
+pathes.append(bPath)
 b.setTime()
 
 print("------ a.time ------")
@@ -60,8 +64,8 @@ print("validatePath(b) : " + str(coord.validatePath(b)))
 
 dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
 
-disp= Display(lab,dic)
+disp= Display(lab,dic,pathes)
 
-disp.showPath(aPath, "red")
-disp.showPath(bPath, "yellow")
+#disp.showPath(aPath, "red")
+#disp.showPath(bPath, "yellow")
 #disp.showPath(cPath, "purple")
