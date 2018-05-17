@@ -1,12 +1,19 @@
 from tkinter import *
-import tkinter
 from functools import*
-
+from astar import AStar
+from node import Node
+from robot import Robot
+from cell import Cell
+from coordination import Coordination
+import pdb
 class Display:
 
-    def __init__(self,grille,dic = None,pathes= []):
+    def __init__(self,grille,astar,dic = None,paths= [],robots=[]):
+
         self.dic = dic
-        self.pathes=pathes
+        self.paths=paths
+        self.robots=robots
+        self.astar=astar
         self.boxesPerRow=grille.nRows
         self.height=700
         self.width=700
@@ -26,20 +33,24 @@ class Display:
         self.bstop=Button(self.window, text='Fermer la fenêtre', command=self.window.destroy)
         self.bstop.pack()
         #
-
-        #self.bstart=Button(self.utility, text='Positionner le départ',command=self.transition_start(self.can))
-        #self.end=Button(self.utility, text='Positionner la fin', command=self.transition_end(self.can))
-        #self.brobot=Button(self.utility, text='Créer robot',command=self.transition_start(self.can))
-        #self.bstart.pack(side="left")
-        #self.end.pack(side="left")
-        #self.brobot.pack(side="left")
+        self.booleanstart=False
+        self.booleanend=False
+        self.start=None
+        self.end=None
+        self.bstart=Button(self.utility, text='Positionner le départ',command=partial(self.transition_start,self.can))
+        self.end=Button(self.utility, text='Positionner la fin', command=partial(self.transition_end,self.can))
+        self.brobot=Button(self.utility, text='Créer robot',command=partial(self.transition_robot,self.can))
+        self.bstart.pack(side="left")
+        self.end.pack(side="left")
+        self.brobot.pack(side="left")
             #
         #CheckButton Ajouté
-        for i, p in enumerate(self.pathes):
-            self.is_checked =StringVar(self.utility, 'red')
+        for i, p in enumerate(self.paths):
+            self.is_checked =IntVar(self.utility)
+            self.nbr_R=i
             self.check = Label(self.utility, text=str(self.is_checked.get()))
             self.pathColor=self.choiceColor(i)
-            self.checkbox = Checkbutton(self.utility,text="Robot n°"+str(i) ,variable=self.is_checked, onvalue="red",offvalue="white",command=partial(self.showPath,p,self.pathColor))
+            self.checkbox = Checkbutton(self.utility,text="Robot n°"+str(i) ,variable=self.is_checked,onvalue=1,offvalue=0,command=partial(self.showPath,p,self.pathColor,self.is_checked.get()))
             self.checkbox.pack()
         #
         self.chain = Label(self.window)
@@ -86,10 +97,15 @@ class Display:
         for typeC in self.dic:
             self.colorType(typeC,self.dic[typeC])
 
-    def showPath(self,path,color) :
-        for node in path:
-            self.showNode(node,color)
-    #RAJOUT -----------------------------------------------------------------
+#RAJOUT -----------------------------------------------------------------
+    def showPath(self,path,color,active) :
+        if active==1 or active ==0:
+            for node in path:
+                self.showNode(node,color)
+        elif active==0:
+            for node in path:
+                self.showNode(node,"white")
+
     def choiceColor(self,i):
         if i == 0:
             return "red"
@@ -134,59 +150,99 @@ class Display:
         #RAJOUT ET PROBLEME ICI-----------------------------------------------------------------
 #LEs Probleme viennent après
 #Probleme avec unbindTheButton ne peut plus agir ensuite
-    def unbindTheButton(self,event):
-        self.can.unbind("<ButtonRelease>",self.callfunction)
-        self.can.unbind("<ButtonPress>",self.callbutton)
-        return
+
 
     def create_robot(self,event):
         print(event.x)
         print(event.y)
-        cello=self.grille.getCell(event.x,event.y)
-        self.booleanstart=False
-        self.booleanend=False
-        if cello.typeC =="S":
+        xc , yc = int(event.x/self.boxSide) , int(event.y/self.boxSide)
+        cello=self.grille.getCell(xc,yc)
+
+
+        if (cello.typeC =="S" and self.booleanend!=True):
+            print("start positionné")
             self.start=cello
             self.booleanstart=True
-        elif cello.typeC =="G":
+
+        elif (cello.typeC =="G" and self.booleanstart!=True):
+            print("end positionné")
             self.end=cello
+
             self.booleanend=True
 
-        elif(self.booleanstart==True and self.booleanend==True):
-            newRobot=Robot("B",self.start,self.end)
+        elif(self.booleanstart==True and cello.typeC =="G"):
+            print("Robot créé")
+            print("end positionné")
+            self.end=cello
+            robotStart=Node(self.start,"L")
+            robotEnd=Node(self.end,"L")
+            self.nbr_R=self.nbr_R+1
+            newRobot=Robot(str(self.nbr_R),robotStart,robotEnd)
             self.robots.append(newRobot)
-            paths = self.astar.findAllPaths(self.robots)
+            self.grille.setRobots(self.robots)
+            newRobotPath=self.astar.findPath(robotStart,robotEnd)
+            self.paths.append(newRobotPath)
+            newRobot.setTime()
+            Coordination(self.robots)
+            self.pathColor=self.choiceColor(self.nbr_R)
+            self.showPath(newRobotPath,self.pathColor,1)
             self.booleanstart=False
             self.booleanend=False
-            return
+            self.can.unbind("<ButtonPress>")
+
+        elif(self.booleanend==True and cello.typeC =="S"):
+            print("Robot créé")
+            print("start positionné")
+            self.start=cello
+            robotStart=Node(self.start,"L")
+            robotEnd=Node(self.end,"L")
+            self.nbr_R=self.nbr_R+1
+            newRobot=Robot(str(self.nbr_R),robotStart,robotEnd)
+            self.robots.append(newRobot)
+            self.grille.setRobots(self.robots)
+            newRobotPath=self.astar.findPath(robotStart,robotEnd)
+            self.paths.append(newRobotPath)
+            newRobot.setTime()
+            Coordination(self.robots)
+            self.pathColor=self.choiceColor(self.nbr_R)
+            self.showPath(newRobotPath,self.pathColor,1)
+            self.booleanstart=False
+            self.booleanend=False
+            self.can.unbind("<ButtonPress>")
+
+        else:
+            print ('Ya pas de robot ici Missieu')
+
 
 
     def transition_start(self,Canvas):
+        #pdb.set_trace()
         self.callbutton=self.can.bind("<ButtonPress>",self.create_start)
 
     def transition_end(self,Canvas):
+        #pdb.set_trace()
         self.callbutton=self.can.bind("<ButtonPress>",self.create_end)
 
     def transition_robot(self,Canvas):
+        #pdb.set_trace()
         self.callbutton=self.can.bind("<ButtonPress>",self.create_robot)
 
     def create_start(self,event):
-        X=event.x
-        Y=event.y
+
+        xc , yc = int(event.x/self.boxSide) , int(event.y/self.boxSide)
         print("j'y suis arrivé DEBUT")
-        Node(Cell(X,Y,"S"),"L")
+        self.grille.chgCell(xc,yc,"S")
 
         for typeC in self.dic:
             self.colorType(typeC,self.dic[typeC])
-        self.callfunction=self.can.bind("<ButtonRelease>",self.unbindTheButton)
-        return
+        self.can.unbind("<ButtonPress>")
+
     def create_end(self,event):
-        X=event.x
-        Y=event.y
-        Node(Cell(X,Y,"G"),"L")
+        xc , yc = int(event.x/self.boxSide) , int(event.y/self.boxSide)
+        self.grille.chgCell(xc,yc,"G")
         print("j'y suis arrivé FIN")
         for typeC in self.dic:
             self.colorType(typeC,self.dic[typeC])
-        self.callfunction=self.can.bind("<ButtonRelease>",self.unbindTheButton)
-        return
+        self.can.unbind("<ButtonPress>")
+
     #RAJOUT-----------------------------------------------------------------
