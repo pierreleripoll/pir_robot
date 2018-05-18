@@ -180,12 +180,27 @@ class Display:
             newRobot=Robot(str(self.nbr_R),robotStart,robotEnd)
             self.robots.append(newRobot)
             self.grille.setRobots(self.robots)
-            newRobotPath=self.astar.findPath(robotStart,robotEnd)
-            self.paths.append(newRobotPath)
+            newRobot.path=self.astar.findPath(robotStart,robotEnd)
+            self.paths.append(newRobot.path)
+
+
+            coor = Coordination(self.robots)
+            check , node = coor.validatePath(newRobot)
+            print("\n",check,repr(node))
+
+            if node:
+                node.changeType("?")
+                self.grille.setCell(node)
+                newRobot.path=self.astar.findPath(robotStart,robotEnd)
+                self.paths.append(newRobot.path)
+                node.changeType(".")
+                self.grille.setCell(node)
+                check , node = coor.validatePath(newRobot)
+                print("\n\nAFTER CHANGING OBSTACLE\n",check,repr(node))
+
             newRobot.setTime()
-            Coordination(self.robots)
             self.pathColor=self.choiceColor(self.nbr_R)
-            self.showPath(newRobotPath,self.pathColor,1)
+            self.showPath(newRobot.path,self.pathColor,1)
             self.booleanstart=False
             self.booleanend=False
             self.can.unbind("<ButtonPress>")
@@ -200,12 +215,27 @@ class Display:
             newRobot=Robot(str(self.nbr_R),robotStart,robotEnd)
             self.robots.append(newRobot)
             self.grille.setRobots(self.robots)
-            newRobotPath=self.astar.findPath(robotStart,robotEnd)
-            self.paths.append(newRobotPath)
+            newRobot.path=self.astar.findPath(robotStart,robotEnd)
+            self.paths.append(newRobot.path)
+
+
+            coor = Coordination(self.robots)
+            check , node = coor.validatePath(newRobot)
+            print("\n",check,repr(node))
+
+            if node:
+                node.changeType("?")
+                self.grille.setCell(node)
+                newRobot.path=self.astar.findPath(robotStart,robotEnd)
+                self.paths.append(newRobot.path)
+                node.changeType(".")
+                self.grille.setCell(node)
+                check , node = coor.validatePath(newRobot)
+                print("\n\nAFTER CHANGING OBSTACLE\n",check,repr(node))
+
             newRobot.setTime()
-            Coordination(self.robots)
             self.pathColor=self.choiceColor(self.nbr_R)
-            self.showPath(newRobotPath,self.pathColor,1)
+            self.showPath(newRobot.path,self.pathColor,1)
             self.booleanstart=False
             self.booleanend=False
             self.can.unbind("<ButtonPress>")

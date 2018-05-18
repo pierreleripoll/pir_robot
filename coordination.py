@@ -10,10 +10,13 @@ class Coordination :
     # Renvoie l'intersection entre les chemins de 2 robots, càd les noeuds communs aux 2 chemins
     def intersection(self, robot1, robot2) :
         intersection = []
+        print("Robot",robot1.name," path :",robot1.path)
+        print("Robot",robot2.name," path :",robot2.path)
         for node1 in robot1.path :
             for node2 in robot2.path :
                 if node1.isSame(node2) :
                     intersection.append(node1)
+        print(intersection)
         return intersection
 
     # Vérifie s'il y a un problème entre les chemins de 2 robots
@@ -25,8 +28,9 @@ class Coordination :
         g1 = False
         s2 = False
         g2 = False
-
-        for node in self.intersection(robot1, robot2) :
+        intersect = self.intersection(robot1, robot2)
+        print("INTERSECT : ",intersect,"\n")
+        for node in intersect :
             if node.isSame(robot1.start) :
                 s1 = True
             if node.isSame(robot1.goal) :
@@ -36,23 +40,30 @@ class Coordination :
             if node.isSame(robot2.goal) :
                 g2 = True
 
-        if s1 and g1 or s2 and g2 :
-            return 1
+
+        if s1 and g1 :
+            #intersection possède a la fois s and goal d'un robot
+            return 1, intersect[int(len(intersect)/2)]
+        if s2 and g2:
+            return 1, intersect[int(len(intersect)/2)]
         elif s1 and s2 :
-            return 2
+            #les deux starts
+            return 2, robot2.start
         elif g1 and g2 :
-            return 3
+            #les deux goals
+            return 3, robot2.goal
         else :
-            return 0
+            return 0, None
 
     # Valide le chemin d'un robot s'il n'y a aucun pb avec les chemins des robots précédemment créés
     def validatePath(self, robot) :
         for r in self.robots :
             if robot is not r :
-                check = self.checkPath(r, robot)
+                check, node = self.checkPath(robot,r)
+                #print(robot,r,check,node)
                 if check != 0 :
-                    return check
-        return 0
+                    return check, node
+        return 0,0
 
     # Renvoie le robot le plus prioritaire des 2 donnés en paramètre,
     # lorsqu'ils vont collisionner au noeud node
