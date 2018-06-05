@@ -35,23 +35,15 @@ class Display:
         #
         self.booleanstart=False
         self.booleanend=False
+        self.click=0
+        self.nbrTot=0
         self.start=None
         self.end=None
-        self.bstart=Button(self.utility, text='Positionner le départ',command=partial(self.transition_start,self.can))
-        self.end=Button(self.utility, text='Positionner la fin', command=partial(self.transition_end,self.can))
         self.brobot=Button(self.utility, text='Créer robot',command=partial(self.transition_robot,self.can))
-        self.bstart.pack(side="left")
-        self.end.pack(side="left")
         self.brobot.pack(side="left")
             #
         #CheckButton Ajouté
-        for i, p in enumerate(self.paths):
-            self.is_checked =IntVar(self.utility)
-            self.nbr_R=i
-            self.check = Label(self.utility, text=str(self.is_checked.get()))
-            self.pathColor=self.choiceColor(i)
-            self.checkbox = Checkbutton(self.utility,text="Robot n°"+str(i) ,variable=self.is_checked,onvalue=1,offvalue=0,command=partial(self.showPath,p,self.pathColor,self.is_checked.get()))
-            self.checkbox.pack()
+        self.afficher_chemin()
         #
         self.chain = Label(self.window)
         self.can.bind("<Motion>",self.showBox)
@@ -159,21 +151,23 @@ class Display:
         cello=self.grille.getCell(xc,yc)
 
 
-        if (cello.typeC =="S" and self.booleanend!=True):
+        if (self.click==0):
             print("start positionné")
             self.start=cello
-            self.booleanstart=True
+            self.click=1
+            self.grille.chgCell(xc,yc,"S")
+            for typeC in self.dic:
+                self.colorType(typeC,self.dic[typeC])
 
-        elif (cello.typeC =="G" and self.booleanstart!=True):
-            print("end positionné")
-            self.end=cello
 
-            self.booleanend=True
-
-        elif(self.booleanstart==True and cello.typeC =="G"):
+        elif(self.click==1):
             print("Robot créé")
             print("end positionné")
             self.end=cello
+            self.grille.chgCell(xc,yc,"G")
+            print("j'y suis arrivé FIN")
+            for typeC in self.dic:
+                self.colorType(typeC,self.dic[typeC])
             robotStart=Node(self.start,"L")
             robotEnd=Node(self.end,"L")
             self.nbr_R=self.nbr_R+1
@@ -199,80 +193,32 @@ class Display:
                 print("\n\nAFTER CHANGING OBSTACLE\n",check,repr(node))
 
             newRobot.setTime()
-            self.pathColor=self.choiceColor(self.nbr_R)
-            self.showPath(newRobot.path,self.pathColor,1)
-            self.booleanstart=False
-            self.booleanend=False
+            self.afficher_chemin()
+            self.click=0
             self.can.unbind("<ButtonPress>")
 
-        elif(self.booleanend==True and cello.typeC =="S"):
-            print("Robot créé")
-            print("start positionné")
-            self.start=cello
-            robotStart=Node(self.start,"L")
-            robotEnd=Node(self.end,"L")
-            self.nbr_R=self.nbr_R+1
-            newRobot=Robot(str(self.nbr_R),robotStart,robotEnd)
-            self.robots.append(newRobot)
-            self.grille.setRobots(self.robots)
-            newRobot.path=self.astar.findPath(robotStart,robotEnd)
-            self.paths.append(newRobot.path)
-
-
-            coor = Coordination(self.robots)
-            check , node = coor.validatePath(newRobot)
-            print("\n",check,repr(node))
-
-            if node:
-                node.changeType("?")
-                self.grille.setCell(node)
-                newRobot.path=self.astar.findPath(robotStart,robotEnd)
-                self.paths.append(newRobot.path)
-                node.changeType(".")
-                self.grille.setCell(node)
-                check , node = coor.validatePath(newRobot)
-                print("\n\nAFTER CHANGING OBSTACLE\n",check,repr(node))
-
-            newRobot.setTime()
-            self.pathColor=self.choiceColor(self.nbr_R)
-            self.showPath(newRobot.path,self.pathColor,1)
-            self.booleanstart=False
-            self.booleanend=False
-            self.can.unbind("<ButtonPress>")
 
         else:
             print ('Ya pas de robot ici Missieu')
 
 
 
-    def transition_start(self,Canvas):
-        #pdb.set_trace()
-        self.callbutton=self.can.bind("<ButtonPress>",self.create_start)
-
-    def transition_end(self,Canvas):
-        #pdb.set_trace()
-        self.callbutton=self.can.bind("<ButtonPress>",self.create_end)
-
     def transition_robot(self,Canvas):
         #pdb.set_trace()
         self.callbutton=self.can.bind("<ButtonPress>",self.create_robot)
 
-    def create_start(self,event):
 
-        xc , yc = int(event.x/self.boxSide) , int(event.y/self.boxSide)
-        print("j'y suis arrivé DEBUT")
-        self.grille.chgCell(xc,yc,"S")
-
-        for typeC in self.dic:
-            self.colorType(typeC,self.dic[typeC])
-        self.can.unbind("<ButtonPress>")
-
-    def create_end(self,event):
-        xc , yc = int(event.x/self.boxSide) , int(event.y/self.boxSide)
-        self.grille.chgCell(xc,yc,"G")
-        print("j'y suis arrivé FIN")
-        for typeC in self.dic:
-            self.colorType(typeC,self.dic[typeC])
-        self.can.unbind("<ButtonPress>")
 
     #RAJOUT-----------------------------------------------------------------
+    def afficher_chemin(self):
+            for i, p in enumerate(self.paths):
+                if self.nbrTot==i:
+                    self.is_checked =IntVar(self.utility)
+                    self.nbr_R=i
+                    self.check = Label(self.utility, text=str(self.is_checked.get()))
+                    self.pathColor=self.choiceColor(i)
+                    self.checkbox = Checkbutton(self.utility,text="Robot n°"+str(i) ,variable=self.is_checked,onvalue=1,offvalue=0,command=partial(self.showPath,p,self.pathColor,self.is_checked.get()))
+                    self.checkbox.pack()
+                    self.nbrTot=self.nbrTot+1
+                else:
+                    pass
