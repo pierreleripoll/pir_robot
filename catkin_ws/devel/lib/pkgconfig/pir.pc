@@ -1,0 +1,8 @@
+prefix=/home/pierre/Documents/PIR/PRG/catkin_ws/devel
+
+Name: pir
+Description: Description of pir
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/pierre/Documents/PIR/PRG/catkin_ws/devel/lib 
+Requires: 
