@@ -2,9 +2,11 @@
 
 import rospy
 import math
+import json
 import numpy as np
 from geometry_msgs.msg import PoseStamped, Pose
 from geometry_msgs.msg import Twist
+from std_msgs.msg import String
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image
 import sys, tty, termios
@@ -17,6 +19,14 @@ SPEED_FORWARD = 0.2
 SPEED_TURN = 0.8
 
 pose = Pose()
+
+def callbackCmd(data):
+	msg = data.data
+	print data.data
+	if msg[0] == "F":
+		forward(float(msg[1:]))
+	elif msg[0] == "T":
+		turn(float(msg[1:]))
 
 def odomCallBack(msg):
 	global pose
@@ -38,15 +48,9 @@ twistPub=rospy.Publisher("/cmd_vel_mux/input/teleop",Twist)
 rospy.init_node("twister")
 motion = Twist()
 odomSub = rospy.Subscriber("/odom", Odometry, odomCallBack)
+cmdSub = rospy.Subscriber("/command", String, callbackCmd)
 
 
-def callbackCmd(msg):
-	print msg
-	if msg[0] == "F":
-		forward(double(msg[1:]))
-	else if msg[0] == "T":
-		turn(double(msg[1:]))
-	
 
 
 
@@ -55,9 +59,10 @@ def twister():
 	print pose
 	while not rospy.is_shutdown():
 		rospy.sleep(0.3)
-		# forward(0.5)
-		# rospy.sleep(0.3)
-		# turn(0.5)
+		forward(0.5)
+	 	rospy.sleep(0.3)
+	 	turn(0.5)
+	#	print pose
 	print "TWISTER"
 
 
@@ -150,6 +155,7 @@ def turnOld(speed,time):
 
 if __name__ == '__main__':
 	try:
-		twister()
+		#twister()
+		rospy.spin()
 	except rospy.ROSInterruptException:
 		pass
