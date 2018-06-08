@@ -2,10 +2,14 @@
 
 import rospy
 import math
-import numpy
+import numpy as np
 from geometry_msgs.msg import PoseStamped, Pose
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
+from sensor_msgs.msg import Image
+import sys, tty, termios
+from cv_bridge import CvBridge, CvBridgeError
+import cv2
 
 DELTA_GOAL = 0.1
 DELTA_TURN = 0.02
@@ -18,13 +22,31 @@ def odomCallBack(msg):
 	global pose
 	pose = msg.pose.pose
 
-
+def callbackImage(msg):
+    bridge = CvBridge()
+    # Use cv_bridge() to convert the ROS image to OpenCV format
+    try:
+        # The depth image is a single-channel float32 image
+        depth_image = bridge.imgmsg_to_cv(msg, "32FC1")
+    except CvBridgeError, e:
+        print e
+    # depth_image.height = height of the matrix
+    # depth_image.width = width of the matrix
+    # depth_image[x,y] = the float value in m of a point place a a height x and width y
 
 twistPub=rospy.Publisher("/cmd_vel_mux/input/teleop",Twist)
 rospy.init_node("twister")
 motion = Twist()
 odomSub = rospy.Subscriber("/odom", Odometry, odomCallBack)
 
+
+def callbackCmd(msg):
+	print msg
+	if msg[0] == "F":
+		forward(double(msg[1:]))
+	else if msg[0] == "T":
+		turn(double(msg[1:]))
+	
 
 
 
@@ -33,9 +55,9 @@ def twister():
 	print pose
 	while not rospy.is_shutdown():
 		rospy.sleep(0.3)
-		forward(0.3)
-		rospy.sleep(0.3)
-		turn(0.5)
+		# forward(0.5)
+		# rospy.sleep(0.3)
+		# turn(0.5)
 	print "TWISTER"
 
 
@@ -82,7 +104,7 @@ def turn(angle):
 	dz = 0
 	print "z0 ",z0," zF ", zF
 	while not goal and not rospy.is_shutdown() :
-		if numpy.sign(pose.orientation.z) == numpy.sign(z):
+		if np.sign(pose.orientation.z) == np.sign(z):
 			dz = abs(pose.orientation.z -z)
 		zcount += dz
 		z=pose.orientation.z
