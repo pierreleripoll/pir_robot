@@ -3,9 +3,11 @@
 
 import rospy
 import math
+import json
 import numpy as np
 from geometry_msgs.msg import PoseStamped, Pose
 from geometry_msgs.msg import Twist
+from std_msgs.msg import String
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image
 import sys, tty, termios
@@ -23,6 +25,14 @@ SPEED_TURN = 0.8
 
 pose = Pose()
 INIT_DIRECTION = "U" # fixe pour l'instant
+
+def callbackCmd(data):
+	msg = data.data
+	print data.data
+	if msg[0] == "F":
+		forward(float(msg[1:]))
+	elif msg[0] == "T":
+		turn(float(msg[1:]))
 
 def odomCallBack(msg):
 	global pose
@@ -44,6 +54,7 @@ twistPub=rospy.Publisher("/cmd_vel_mux/input/teleop",Twist, queue_size=10)
 rospy.init_node("twister")
 motion = Twist()
 odomSub = rospy.Subscriber("/odom", Odometry, odomCallBack)
+cmdSub = rospy.Subscriber("/command", String, callbackCmd)
 
 
 def callbackCmd(msg):
@@ -61,11 +72,11 @@ def twister():
 	print(pose)
 	while not rospy.is_shutdown():
 		rospy.sleep(0.3)
-		# forward(0.5)
-		# rospy.sleep(0.3)
-		# turn(0.5)
-	print("TWISTER")
-
+		forward(0.5)
+	 	rospy.sleep(0.3)
+	 	turn(0.5)
+	#	print pose
+	print "TWISTER"
 
 
 # Renvoie une position erronée (loi normale) en fonction de la position en paramètre
@@ -211,11 +222,12 @@ def turnOld(speed,time):
 if __name__ == '__main__':
 	try:
 		print(pose)
-		#twister()
 		a = Node(Cell(0, 0), "U")
 		b = Node(Cell(1, 0), "R")
 		c = Node(Cell(1, 1), "U")
 		path = [a, b, c]
 		followPath(path)
+		#twister()
+		rospy.spin()
 	except rospy.ROSInterruptException:
 		pass
