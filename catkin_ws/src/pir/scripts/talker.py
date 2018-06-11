@@ -10,6 +10,7 @@ from sensor_msgs.msg import Image
 import sys, tty, termios
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
+from node import Node
 
 DELTA_GOAL = 0.1
 DELTA_TURN = 0.02
@@ -17,6 +18,7 @@ SPEED_FORWARD = 0.2
 SPEED_TURN = 0.8
 
 pose = Pose()
+INIT_DIRECTION = "U" # fixe pour l'instant
 
 def odomCallBack(msg):
 	global pose
@@ -46,7 +48,7 @@ def callbackCmd(msg):
 		forward(double(msg[1:]))
 	else if msg[0] == "T":
 		turn(double(msg[1:]))
-	
+
 
 
 
@@ -60,6 +62,11 @@ def twister():
 		# turn(0.5)
 	print "TWISTER"
 
+
+
+# Renvoie une position erronée (loi normale) en fonction de la position en paramètre
+def getPosition(position) :
+	return np.random.normal((position.x, position.y), 1.0, 2)
 
 
 
@@ -105,7 +112,7 @@ def turn(angle):
 	print "z0 ",z0," zF ", zF
 	while not goal and not rospy.is_shutdown() :
 		if np.sign(pose.orientation.z) == np.sign(z):
-			dz = abs(pose.orientation.z -z)
+			dz = abs(pose.orientation.z - z)
 		zcount += dz
 		z=pose.orientation.z
 		print "("+str(z)+")"
@@ -119,6 +126,51 @@ def turn(angle):
 		twistPub.publish(motion)
 		rospy.sleep(0.01)
 	print "END TURN"
+
+
+
+def getNodeAngle(node) :
+	if(node.dir == INIT_DIRECTION) :
+		return 0
+
+	else :
+		init_angle = 0 #absolu
+		if(INIT_DIRECTION == "R") :
+			init_angle = 0.5
+		elif(INIT_DIRECTION == "D") :
+			init_angle = 1
+		elif(INIT_DIRECTION == "L") :
+			init_angle = -0.5
+
+		node_angle = 0 #absolu
+		if(node.dir == "R") :
+			node_angle = 0.5
+		elif(node.dir == "D") :
+			node_angle = 1
+		elif(node.dir == "L") :
+			node_angle = -0.5
+
+		if(node_angle - init_angle == 1.5) :
+			return -0.5
+		else return node_angle - init_angle
+
+
+
+def goTo(node) :
+	if(abs(node.x - pose.position.x) <= DELTA_GOAL) :
+		turn(getNodeAngle(node) - pose.orientation.z)
+		forward(node.y - pose.position.y)
+	elif(abs(node.x - pose.position.y) <= DELTA_GOAL) :
+		turn(getNodeAngle(node) - pose.orientation.z)
+		forward(node.x - pose.position.x)
+	else :
+		print("We fucked up")
+
+
+# ajouter position erronée
+def followPath(path) :
+	for node in path :
+		goTo(node)
 
 
 def forwardOld(speed,time):
@@ -150,6 +202,11 @@ def turnOld(speed,time):
 
 if __name__ == '__main__':
 	try:
-		twister()
+		#twister()
+		a = Node(0, 0, "U")
+		b = Node(1, 0, "R")
+		c = Node(1, 1, "U")
+		path = [a, b, c]
+		followPath(path)
 	except rospy.ROSInterruptException:
 		pass
