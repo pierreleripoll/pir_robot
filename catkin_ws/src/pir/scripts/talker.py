@@ -11,7 +11,9 @@ from sensor_msgs.msg import Image
 import sys, tty, termios
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
-from node import Node
+import sys
+sys.path.insert(0, '../')
+from simulation.node import Node
 
 DELTA_GOAL = 0.1
 DELTA_TURN = 0.02
