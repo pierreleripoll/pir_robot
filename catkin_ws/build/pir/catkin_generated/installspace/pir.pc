@@ -1,8 +1,8 @@
-prefix=/home/pierre/Documents/PIR/PRG/catkin_ws/install
+prefix=/home/invite/Documents/PIR3/pir_robot/catkin_ws/install
 
 Name: pir
 Description: Description of pir
 Version: 0.0.0
 Cflags: 
-Libs: -L/home/pierre/Documents/PIR/PRG/catkin_ws/install/lib 
+Libs: -L/home/invite/Documents/PIR3/pir_robot/catkin_ws/install/lib 
 Requires: 

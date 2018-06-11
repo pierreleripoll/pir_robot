@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import rospy
 import math
@@ -46,7 +47,7 @@ def callbackCmd(msg):
 	print msg
 	if msg[0] == "F":
 		forward(double(msg[1:]))
-	else if msg[0] == "T":
+	elif msg[0] == "T":
 		turn(double(msg[1:]))
 
 
@@ -152,7 +153,8 @@ def getNodeAngle(node) :
 
 		if(node_angle - init_angle == 1.5) :
 			return -0.5
-		else return node_angle - init_angle
+		else :
+			return node_angle - init_angle
 
 
 
