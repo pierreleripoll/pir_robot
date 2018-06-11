@@ -2,3 +2,5 @@
 cache/*
 catkin_ws/devel/*
 catkin_ws/build/*
+*.pyc
+simulation/*.pyc
