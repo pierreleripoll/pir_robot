@@ -53,13 +53,6 @@ def resetOdom():
 	while time() - timer < 0.25:
 	    reset_odom.publish(Empty())
 
-def callbackCmd(msg):
-	print(msg)
-	if msg[0] == "F":
-		forward(double(msg[1:]))
-	elif msg[0] == "T":
-		turn(double(msg[1:]))
-
 
 
 
@@ -172,6 +165,8 @@ def turn(angle):
 
 		twistPub.publish(motion)
 		rospy.sleep(0.01)
+	motion.angular.z = 0
+	twistPub.publish(motion)
 	print("END TURN")
 
 
