@@ -1,2 +1,2 @@
 pir
--DCATKIN_DEVEL_PREFIX=/home/pierre/Documents/PIR/PRG/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/pierre/Documents/PIR/PRG/catkin_ws/install -G Unix Makefiles
+-DCATKIN_DEVEL_PREFIX=/home/invite/Documents/PIR3/pir_robot/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/invite/Documents/PIR3/pir_robot/catkin_ws/install -G Unix Makefiles

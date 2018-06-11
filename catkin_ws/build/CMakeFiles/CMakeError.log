@@ -1,24 +1,23 @@
 Determining if the pthread_create exist failed with the following output:
-Change Dir: /home/pierre/Documents/PIR/PRG/catkin_ws/build/CMakeFiles/CMakeTmp
+Change Dir: /home/invite/Documents/PIR3/pir_robot/catkin_ws/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_24d41/fast"
-/usr/bin/make -f CMakeFiles/cmTC_24d41.dir/build.make CMakeFiles/cmTC_24d41.dir/build
-make[1] : on entre dans le répertoire « /home/pierre/Documents/PIR/PRG/catkin_ws/build/CMakeFiles/CMakeTmp »
-Building C object CMakeFiles/cmTC_24d41.dir/CheckSymbolExists.c.o
-/usr/bin/cc     -o CMakeFiles/cmTC_24d41.dir/CheckSymbolExists.c.o   -c /home/pierre/Documents/PIR/PRG/catkin_ws/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
-Linking C executable cmTC_24d41
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_24d41.dir/link.txt --verbose=1
-/usr/bin/cc       CMakeFiles/cmTC_24d41.dir/CheckSymbolExists.c.o  -o cmTC_24d41 -rdynamic 
-CMakeFiles/cmTC_24d41.dir/CheckSymbolExists.c.o : Dans la fonction « main » :
-CheckSymbolExists.c:(.text+0x16) : référence indéfinie vers « pthread_create »
+Run Build Command:/usr/bin/make "cmTryCompileExec1689117579/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec1689117579.dir/build.make CMakeFiles/cmTryCompileExec1689117579.dir/build
+make[1]: Entering directory `/home/invite/Documents/PIR3/pir_robot/catkin_ws/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/invite/Documents/PIR3/pir_robot/catkin_ws/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec1689117579.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTryCompileExec1689117579.dir/CheckSymbolExists.c.o   -c /home/invite/Documents/PIR3/pir_robot/catkin_ws/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTryCompileExec1689117579
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec1689117579.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTryCompileExec1689117579.dir/CheckSymbolExists.c.o  -o cmTryCompileExec1689117579 -rdynamic 
+CMakeFiles/cmTryCompileExec1689117579.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_24d41.dir/build.make:97 : la recette pour la cible « cmTC_24d41 » a échouée
-make[1]: *** [cmTC_24d41] Erreur 1
-make[1] : on quitte le répertoire « /home/pierre/Documents/PIR/PRG/catkin_ws/build/CMakeFiles/CMakeTmp »
-Makefile:126 : la recette pour la cible « cmTC_24d41/fast » a échouée
-make: *** [cmTC_24d41/fast] Erreur 2
+make[1]: *** [cmTryCompileExec1689117579] Error 1
+make[1]: Leaving directory `/home/invite/Documents/PIR3/pir_robot/catkin_ws/build/CMakeFiles/CMakeTmp'
+make: *** [cmTryCompileExec1689117579/fast] Error 2
 
-File /home/pierre/Documents/PIR/PRG/catkin_ws/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+File /home/invite/Documents/PIR3/pir_robot/catkin_ws/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
 /* */
 #include <pthread.h>
 
@@ -34,22 +33,21 @@ int main(int argc, char** argv)
 }
 
 Determining if the function pthread_create exists in the pthreads failed with the following output:
-Change Dir: /home/pierre/Documents/PIR/PRG/catkin_ws/build/CMakeFiles/CMakeTmp
+Change Dir: /home/invite/Documents/PIR3/pir_robot/catkin_ws/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_27eb0/fast"
-/usr/bin/make -f CMakeFiles/cmTC_27eb0.dir/build.make CMakeFiles/cmTC_27eb0.dir/build
-make[1] : on entre dans le répertoire « /home/pierre/Documents/PIR/PRG/catkin_ws/build/CMakeFiles/CMakeTmp »
-Building C object CMakeFiles/cmTC_27eb0.dir/CheckFunctionExists.c.o
-/usr/bin/cc    -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_27eb0.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.5/Modules/CheckFunctionExists.c
-Linking C executable cmTC_27eb0
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_27eb0.dir/link.txt --verbose=1
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_27eb0.dir/CheckFunctionExists.c.o  -o cmTC_27eb0 -rdynamic -lpthreads 
-/usr/bin/ld : ne peut trouver -lpthreads
+Run Build Command:/usr/bin/make "cmTryCompileExec2642300289/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec2642300289.dir/build.make CMakeFiles/cmTryCompileExec2642300289.dir/build
+make[1]: Entering directory `/home/invite/Documents/PIR3/pir_robot/catkin_ws/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/invite/Documents/PIR3/pir_robot/catkin_ws/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec2642300289.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec2642300289.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-2.8/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec2642300289
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec2642300289.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec2642300289.dir/CheckFunctionExists.c.o  -o cmTryCompileExec2642300289 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_27eb0.dir/build.make:97 : la recette pour la cible « cmTC_27eb0 » a échouée
-make[1]: *** [cmTC_27eb0] Erreur 1
-make[1] : on quitte le répertoire « /home/pierre/Documents/PIR/PRG/catkin_ws/build/CMakeFiles/CMakeTmp »
-Makefile:126 : la recette pour la cible « cmTC_27eb0/fast » a échouée
-make: *** [cmTC_27eb0/fast] Erreur 2
+make[1]: *** [cmTryCompileExec2642300289] Error 1
+make[1]: Leaving directory `/home/invite/Documents/PIR3/pir_robot/catkin_ws/build/CMakeFiles/CMakeTmp'
+make: *** [cmTryCompileExec2642300289/fast] Error 2
 
 

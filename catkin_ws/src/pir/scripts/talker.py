@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import rospy
 import math
@@ -10,6 +11,10 @@ from std_msgs.msg import String
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Empty
 from time import time
+import sys
+sys.path.insert(0, '../')
+from simulation.node import Node
+from simulation.cell import Cell
 
 
 DELTA_GOAL = 0.01
@@ -18,6 +23,7 @@ SPEED_FORWARD = 0.2
 SPEED_TURN = 0.8
 
 pose = Pose()
+INIT_DIRECTION = "U" # fixe pour l'instant
 
 def callbackCmd(data):
 	msg = data.data
@@ -34,7 +40,7 @@ def odomCallBack(msg):
 
 
 
-twistPub=rospy.Publisher("/cmd_vel_mux/input/teleop",Twist)
+twistPub=rospy.Publisher("/cmd_vel_mux/input/teleop",Twist, queue_size=10)
 rospy.init_node("twister")
 motion = Twist()
 odomSub = rospy.Subscriber("/odom", Odometry, odomCallBack)
@@ -47,12 +53,19 @@ def resetOdom():
 	while time() - timer < 0.25:
 	    reset_odom.publish(Empty())
 
+def callbackCmd(msg):
+	print(msg)
+	if msg[0] == "F":
+		forward(double(msg[1:]))
+	elif msg[0] == "T":
+		turn(double(msg[1:]))
+
 
 
 
 def twister():
 	global pose
-	print pose
+	print(pose)
 	while not rospy.is_shutdown():
 		rospy.sleep(0.3)
 		forward(0.5)
@@ -62,15 +75,19 @@ def twister():
 	print "TWISTER"
 
 
+# Renvoie une position erronée (loi normale) en fonction de la position en paramètre
+def getPosition(position) :
+	return np.random.normal((position.x, position.y), 1.0, 2)
+
 
 
 def forward(dist):
 	global pose
-	print pose
+	print(pose)
 	x0 = pose.position.x
 	y0 = pose.position.y
 	angle = pose.orientation.z * math.pi
-	print "teta "+str(angle)
+	print("teta "+str(angle))
 	dx = math.cos(angle) * dist
 	dy = math.sin(angle) * dist
 	xF = x0+dx
@@ -107,7 +124,7 @@ def forward(dist):
 				motion.linear.x = -SPEED_FORWARD
 		else:
 			goal = True
-			print "GOAL REACHED"
+			print("GOAL REACHED")
 
 		twistPub.publish(motion)
 		rospy.sleep(0.01)
@@ -120,7 +137,7 @@ def forward(dist):
 #angle en radian/PI
 def turn(angle):
 	global pose
-	print pose
+	print(pose)
 	z0 = pose.orientation.z
 	zF = pose.orientation.z + abs(angle)
 	z=pose.orientation.z
@@ -151,19 +168,74 @@ def turn(angle):
 				motion.angular.z = -SPEED_TURN
 		else:
 			goal = True
-			print "GOAL REACHED"
+			print("GOAL REACHED")
 
 		twistPub.publish(motion)
 		rospy.sleep(0.01)
-	motion.angular.z = 0
-	twistPub.publish(motion)
+	print("END TURN")
 
-	print "END TURN"
+
+
+def getNodeAngle(node) :
+	if(node.dir == INIT_DIRECTION) :
+		return 0
+
+	else :
+		init_angle = 0 #absolu
+		if(INIT_DIRECTION == "R") :
+			init_angle = 0.5
+		elif(INIT_DIRECTION == "D") :
+			init_angle = 1
+		elif(INIT_DIRECTION == "L") :
+			init_angle = -0.5
+
+		node_angle = 0 #absolu
+		if(node.dir == "R") :
+			node_angle = 0.5
+		elif(node.dir == "D") :
+			node_angle = 1
+		elif(node.dir == "L") :
+			node_angle = -0.5
+
+		if(node_angle - init_angle == 1.5) :
+			return -0.5
+		else :
+			return node_angle - init_angle
+
+
+
+def goTo(node) :
+	rospy.sleep(0.3)
+	if(abs(node.x - pose.position.x) <= DELTA_GOAL) :
+		turn(getNodeAngle(node) - pose.orientation.z)
+		rospy.sleep(0.3)
+		forward(node.y - pose.position.y)
+	elif(abs(node.x - pose.position.y) <= DELTA_GOAL) :
+		turn(getNodeAngle(node) - pose.orientation.z)
+		rospy.sleep(0.3)
+		forward(node.x - pose.position.x)
+	else :
+		print("We fucked up")
+
+
+# ajouter position erronée
+def followPath(path) :
+	for node in path :
+		goTo(node)
+
+
+
 
 
 
 if __name__ == '__main__':
 	try:
+		print(pose)
+		a = Node(Cell(0, 0), "U")
+		b = Node(Cell(1, 0), "R")
+		c = Node(Cell(1, 1), "U")
+		path = [a, b, c]
+		followPath(path)
 		#twister()
 		rospy.spin()
 	except rospy.ROSInterruptException:
