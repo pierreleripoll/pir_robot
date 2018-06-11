@@ -9,7 +9,7 @@ class Node(Cell):
         Cell.__init__(self, cell.x, cell.y, cell.typeC, cell.txt)
         self.dir = dir
         self.cout = 0
-        self.h = math.inf # heuristique
+        self.h = float('inf') # heuristique
         self.parent = None
 
 

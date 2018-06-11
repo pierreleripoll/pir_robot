@@ -14,6 +14,7 @@ import cv2
 import sys
 sys.path.insert(0, '../')
 from simulation.node import Node
+from simulation.cell import Cell
 
 DELTA_GOAL = 0.1
 DELTA_TURN = 0.02
@@ -33,20 +34,20 @@ def callbackImage(msg):
     try:
         # The depth image is a single-channel float32 image
         depth_image = bridge.imgmsg_to_cv(msg, "32FC1")
-    except CvBridgeError, e:
-        print e
+    except CvBridgeError as e:
+        print(e)
     # depth_image.height = height of the matrix
     # depth_image.width = width of the matrix
     # depth_image[x,y] = the float value in m of a point place a a height x and width y
 
-twistPub=rospy.Publisher("/cmd_vel_mux/input/teleop",Twist)
+twistPub=rospy.Publisher("/cmd_vel_mux/input/teleop",Twist, queue_size=10)
 rospy.init_node("twister")
 motion = Twist()
 odomSub = rospy.Subscriber("/odom", Odometry, odomCallBack)
 
 
 def callbackCmd(msg):
-	print msg
+	print(msg)
 	if msg[0] == "F":
 		forward(double(msg[1:]))
 	elif msg[0] == "T":
@@ -57,13 +58,13 @@ def callbackCmd(msg):
 
 def twister():
 	global pose
-	print pose
+	print(pose)
 	while not rospy.is_shutdown():
 		rospy.sleep(0.3)
 		# forward(0.5)
 		# rospy.sleep(0.3)
 		# turn(0.5)
-	print "TWISTER"
+	print("TWISTER")
 
 
 
@@ -75,60 +76,60 @@ def getPosition(position) :
 
 def forward(dist):
 	global pose
-	print pose
+	print(pose)
 	x0 = pose.position.x
 	y0 = pose.position.y
 	angle = pose.orientation.z * math.pi
-	print "teta "+str(angle)
+	print("teta "+str(angle))
 	dx = math.cos(angle) * dist
 	dy = math.sin(angle) * dist
 	xF = x0+dx
 	yF = y0+dy
 	goal = False
-	print "x0",x0," y0",y0,"xF ",xF," yF ",yF
+	print("x0",x0," y0",y0,"xF ",xF," yF ",yF)
 	while not goal and not rospy.is_shutdown() :
 		x = pose.position.x
 		y = pose.position.y
-		print "("+str(x)+","+str(y)+")"
+		print("("+str(x)+","+str(y)+")")
 		if (abs(xF-x0)<2*DELTA_GOAL or abs(xF-x)>DELTA_GOAL) and (abs(yF-y0)<2*DELTA_GOAL or abs(yF-y)>DELTA_GOAL):
 			motion.linear.x = SPEED_FORWARD
 		else:
 			motion.linear.x = 0
 			goal = True
-			print "GOAL REACHED"
+			print("GOAL REACHED")
 
 		twistPub.publish(motion)
 		rospy.sleep(0.01)
-	print "END FORWARD"
+	print("END FORWARD")
 
 
 #angle en radian/PI
 def turn(angle):
 	global pose
-	print pose
+	print(pose)
 	z0 = pose.orientation.z
 	zF = pose.orientation.z +angle
 	z=pose.orientation.z
 	zcount = 0
 	goal = False
 	dz = 0
-	print "z0 ",z0," zF ", zF
+	print("z0 ",z0," zF ", zF)
 	while not goal and not rospy.is_shutdown() :
 		if np.sign(pose.orientation.z) == np.sign(z):
 			dz = abs(pose.orientation.z - z)
 		zcount += dz
 		z=pose.orientation.z
-		print "("+str(z)+")"
+		print("("+str(z)+")")
 		if abs(zcount-angle)>DELTA_TURN:
 			motion.angular.z = SPEED_TURN
 		else:
 			motion.angular.z = 0
 			goal = True
-			print "GOAL REACHED"
+			print("GOAL REACHED")
 
 		twistPub.publish(motion)
 		rospy.sleep(0.01)
-	print "END TURN"
+	print("END TURN")
 
 
 
@@ -161,11 +162,14 @@ def getNodeAngle(node) :
 
 
 def goTo(node) :
+	rospy.sleep(0.3)
 	if(abs(node.x - pose.position.x) <= DELTA_GOAL) :
 		turn(getNodeAngle(node) - pose.orientation.z)
+		rospy.sleep(0.3)
 		forward(node.y - pose.position.y)
 	elif(abs(node.x - pose.position.y) <= DELTA_GOAL) :
 		turn(getNodeAngle(node) - pose.orientation.z)
+		rospy.sleep(0.3)
 		forward(node.x - pose.position.x)
 	else :
 		print("We fucked up")
@@ -199,17 +203,18 @@ def turnOld(speed,time):
 		twistPub.publish(motion)
 		rospy.sleep(0.1)
 		timePassed += 0.1
-		print pose
+		print(pose)
 	motion.linear.x = 0
 	motion.angular.z = 0
 	twistPub.publish(motion)
 
 if __name__ == '__main__':
 	try:
+		print(pose)
 		#twister()
-		a = Node(0, 0, "U")
-		b = Node(1, 0, "R")
-		c = Node(1, 1, "U")
+		a = Node(Cell(0, 0), "U")
+		b = Node(Cell(1, 0), "R")
+		c = Node(Cell(1, 1), "U")
 		path = [a, b, c]
 		followPath(path)
 	except rospy.ROSInterruptException:
