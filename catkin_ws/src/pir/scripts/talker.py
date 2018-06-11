@@ -24,6 +24,7 @@ SPEED_TURN = 0.8
 
 pose = Pose()
 INIT_DIRECTION = "U" # fixe pour l'instant
+orientation = 0
 
 def callbackCmd(data):
 	msg = data.data
@@ -69,8 +70,8 @@ def twister():
 
 
 # Renvoie une position erronée (loi normale) en fonction de la position en paramètre
-def getPosition(position) :
-	return np.random.normal((position.x, position.y), 1.0, 2)
+def getPosition(node) :
+	return np.random.normal((node.x, node.y), 0.1, 2)
 
 
 
@@ -200,15 +201,16 @@ def getNodeAngle(node) :
 
 
 def goTo(node) :
+	position = getPosition(node)
 	rospy.sleep(0.3)
-	if(abs(node.x - pose.position.x) <= DELTA_GOAL) :
-		turn(getNodeAngle(node) - pose.orientation.z)
+	if(abs(node.x - position[0]) <= DELTA_GOAL) :
+		turn(getNodeAngle(node) - orientation)
 		rospy.sleep(0.3)
-		forward(node.y - pose.position.y)
-	elif(abs(node.x - pose.position.y) <= DELTA_GOAL) :
-		turn(getNodeAngle(node) - pose.orientation.z)
+		forward(node.y - position[1])
+	elif(abs(node.x - position[1]) <= DELTA_GOAL) :
+		turn(getNodeAngle(node) - orientation)
 		rospy.sleep(0.3)
-		forward(node.x - pose.position.x)
+		forward(node.x - position[0])
 	else :
 		print("We fucked up")
 
