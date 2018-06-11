@@ -9,17 +9,16 @@ from geometry_msgs.msg import PoseStamped, Pose
 from geometry_msgs.msg import Twist
 from std_msgs.msg import String
 from nav_msgs.msg import Odometry
-from sensor_msgs.msg import Image
-import sys, tty, termios
-from cv_bridge import CvBridge, CvBridgeError
-import cv2
+from std_msgs.msg import Empty
+from time import time
 import sys
 sys.path.insert(0, '../')
 from simulation.node import Node
 from simulation.cell import Cell
 
-DELTA_GOAL = 0.1
-DELTA_TURN = 0.02
+
+DELTA_GOAL = 0.01
+DELTA_TURN = 0.002
 SPEED_FORWARD = 0.2
 SPEED_TURN = 0.8
 
@@ -30,33 +29,30 @@ orientation = 0
 def callbackCmd(data):
 	msg = data.data
 	print data.data
-	if msg[0] == "F":
+	if msg[0] == "F" or msg[0] == "f":
 		forward(float(msg[1:]))
-	elif msg[0] == "T":
+	elif msg[0] == "T" or msg[0]=="t":
 		turn(float(msg[1:]))
+	resetOdom()
 
 def odomCallBack(msg):
 	global pose
 	pose = msg.pose.pose
 
-def callbackImage(msg):
-    bridge = CvBridge()
-    # Use cv_bridge() to convert the ROS image to OpenCV format
-    try:
-        # The depth image is a single-channel float32 image
-        depth_image = bridge.imgmsg_to_cv(msg, "32FC1")
-    except CvBridgeError as e:
-        print(e)
-    # depth_image.height = height of the matrix
-    # depth_image.width = width of the matrix
-    # depth_image[x,y] = the float value in m of a point place a a height x and width y
+
 
 twistPub=rospy.Publisher("/cmd_vel_mux/input/teleop",Twist, queue_size=10)
 rospy.init_node("twister")
 motion = Twist()
 odomSub = rospy.Subscriber("/odom", Odometry, odomCallBack)
 cmdSub = rospy.Subscriber("/command", String, callbackCmd)
+reset_odom = rospy.Publisher('/mobile_base/commands/reset_odometry', Empty, queue_size=10)
 
+
+def resetOdom():
+	timer = time()
+	while time() - timer < 0.25:
+	    reset_odom.publish(Empty())
 
 def callbackCmd(msg):
 	print(msg)
@@ -98,21 +94,45 @@ def forward(dist):
 	xF = x0+dx
 	yF = y0+dy
 	goal = False
-	print("x0",x0," y0",y0,"xF ",xF," yF ",yF)
+
+	x = pose.position.x
+
+	xcount = 0
+	deriv = abs(xcount-xF)
+	#print "x0",x0," y0",y0,"xF ",xF," yF ",yF
+
 	while not goal and not rospy.is_shutdown() :
-		x = pose.position.x
-		y = pose.position.y
-		print("("+str(x)+","+str(y)+")")
-		if (abs(xF-x0)<2*DELTA_GOAL or abs(xF-x)>DELTA_GOAL) and (abs(yF-y0)<2*DELTA_GOAL or abs(yF-y)>DELTA_GOAL):
-			motion.linear.x = SPEED_FORWARD
+		dx = abs(pose.position.x-x)
+
+		if dx>0.005:
+			x = pose.position.x
+			if np.sign(dist)>0:
+				xcount += dx
+			else :
+				xcount -= dx
+
+		#print "("+str(x)+","+str(y)+")"
+		if abs(xcount-xF)>deriv :
+			print("ON DEPASSE")
+			goal = True
+		deriv = abs(xcount-xF)
+
+		if (abs(xF-x0)<2*DELTA_GOAL or abs(xF-x)>DELTA_GOAL):
+			print(abs(xF-x))
+			if np.sign(dist)>0:
+				motion.linear.x = SPEED_FORWARD
+			else:
+				motion.linear.x = -SPEED_FORWARD
 		else:
-			motion.linear.x = 0
 			goal = True
 			print("GOAL REACHED")
 
 		twistPub.publish(motion)
 		rospy.sleep(0.01)
-	print("END FORWARD")
+
+	motion.linear.x = 0
+	twistPub.publish(motion)
+	print "END FORWARD"
 
 
 #angle en radian/PI
@@ -120,22 +140,34 @@ def turn(angle):
 	global pose
 	print(pose)
 	z0 = pose.orientation.z
-	zF = pose.orientation.z +angle
+	zF = pose.orientation.z + abs(angle)
 	z=pose.orientation.z
 	zcount = 0
 	goal = False
 	dz = 0
-	print("z0 ",z0," zF ", zF)
+	print "z0 ",z0," zF ", zF
+	deriv = abs(zcount-abs(angle))
 	while not goal and not rospy.is_shutdown() :
 		if np.sign(pose.orientation.z) == np.sign(z):
-			dz = abs(pose.orientation.z - z)
-		zcount += dz
-		z=pose.orientation.z
-		print("("+str(z)+")")
-		if abs(zcount-angle)>DELTA_TURN:
-			motion.angular.z = SPEED_TURN
+			dz = abs(pose.orientation.z -z)
 		else:
-			motion.angular.z = 0
+			z=pose.orientation.z
+		if dz>0.005:
+			zcount += dz
+			z=pose.orientation.z
+	#	print "("+str(z)+")"
+		if abs(zcount-abs(angle))>deriv :
+			print("ON DEPASSE")
+			goal = True
+		deriv = abs(zcount-abs(angle))
+
+		if deriv>DELTA_TURN:
+			print (deriv)
+			if np.sign(angle)>0:
+				motion.angular.z = SPEED_TURN
+			else:
+				motion.angular.z = -SPEED_TURN
+		else:
 			goal = True
 			print("GOAL REACHED")
 
@@ -194,32 +226,9 @@ def followPath(path) :
 		goTo(node)
 
 
-def forwardOld(speed,time):
-	timePassed = 0
-	while timePassed < time:
-		motion.linear.x = speed
-		motion.angular.z = 0
-		twistPub.publish(motion)
-		rospy.sleep(0.1)
-		timePassed += 0.1
-	motion.linear.x = 0
-	motion.angular.z = 0
-	twistPub.publish(motion)
 
 
-def turnOld(speed,time):
-	timePassed = 0
-	global pose
-	while timePassed < time:
-		motion.linear.x = 0
-		motion.angular.z = speed
-		twistPub.publish(motion)
-		rospy.sleep(0.1)
-		timePassed += 0.1
-		print(pose)
-	motion.linear.x = 0
-	motion.angular.z = 0
-	twistPub.publish(motion)
+
 
 if __name__ == '__main__':
 	try:
