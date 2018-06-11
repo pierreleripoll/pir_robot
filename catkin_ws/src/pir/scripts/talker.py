@@ -23,6 +23,7 @@ SPEED_FORWARD = 0.2
 SPEED_TURN = 0.8
 
 pose = Pose()
+position = [0, 0]
 INIT_DIRECTION = "U" # fixe pour l'instant
 orientation = 0
 
@@ -78,11 +79,12 @@ def twister():
 
 # Renvoie une position erronée (loi normale) en fonction de la position en paramètre
 def getPosition(node) :
-	return np.random.normal((node.x, node.y), 0.1, 2)
+	return np.random.normal((node.x, node.y), 0.01, 2)
 
 
 
 def forward(dist):
+	resetOdom()
 	global pose
 	print(pose)
 	x0 = pose.position.x
@@ -99,7 +101,7 @@ def forward(dist):
 
 	xcount = 0
 	deriv = abs(xcount-xF)
-	#print "x0",x0," y0",y0,"xF ",xF," yF ",yF
+	print "x0",x0," y0",y0,"xF ",xF," yF ",yF
 
 	while not goal and not rospy.is_shutdown() :
 		dx = abs(pose.position.x-x)
@@ -118,7 +120,7 @@ def forward(dist):
 		deriv = abs(xcount-xF)
 
 		if (abs(xF-x0)<2*DELTA_GOAL or abs(xF-x)>DELTA_GOAL):
-			print(abs(xF-x))
+			#print(abs(xF-x))
 			if np.sign(dist)>0:
 				motion.linear.x = SPEED_FORWARD
 			else:
@@ -137,6 +139,7 @@ def forward(dist):
 
 #angle en radian/PI
 def turn(angle):
+	resetOdom()
 	global pose
 	print(pose)
 	z0 = pose.orientation.z
@@ -162,7 +165,7 @@ def turn(angle):
 		deriv = abs(zcount-abs(angle))
 
 		if deriv>DELTA_TURN:
-			print (deriv)
+			#print (deriv)
 			if np.sign(angle)>0:
 				motion.angular.z = SPEED_TURN
 			else:
@@ -173,6 +176,8 @@ def turn(angle):
 
 		twistPub.publish(motion)
 		rospy.sleep(0.01)
+	motion.angular.z = 0
+	twistPub.publish(motion)
 	print("END TURN")
 
 
@@ -206,23 +211,32 @@ def getNodeAngle(node) :
 
 
 def goTo(node) :
-	position = getPosition(node)
+	global position
+	global orientation
+	print("POSITION : " + str(position))
+	print("abs(node.x - position[0]) " + str(abs(node.x - position[0])))
+	print("abs(node.y - position[1]) " + str(abs(node.y - position[1])))
 	rospy.sleep(0.3)
 	if(abs(node.x - position[0]) <= DELTA_GOAL) :
 		turn(getNodeAngle(node) - orientation)
 		rospy.sleep(0.3)
+		print("AH" + str(node.y - position[1]))
 		forward(node.y - position[1])
-	elif(abs(node.x - position[1]) <= DELTA_GOAL) :
+	elif(abs(node.y - position[1]) <= DELTA_GOAL) :
 		turn(getNodeAngle(node) - orientation)
 		rospy.sleep(0.3)
+		print("AH" + str(node.x - position[0]))
 		forward(node.x - position[0])
 	else :
 		print("We fucked up")
+	position = getPosition(node)
+	orientation = getNodeAngle(node)
 
 
 # ajouter position erronée
 def followPath(path) :
 	for node in path :
+		print("NEW NODE")
 		goTo(node)
 
 
@@ -233,9 +247,9 @@ def followPath(path) :
 if __name__ == '__main__':
 	try:
 		print(pose)
-		a = Node(Cell(0, 0), "U")
-		b = Node(Cell(1, 0), "R")
-		c = Node(Cell(1, 1), "U")
+		a = Node(Cell(0.5, 0), "U")
+		b = Node(Cell(0.5, 0), "R")
+		c = Node(Cell(1, 0), "U")
 		path = [a, b, c]
 		followPath(path)
 		#twister()
