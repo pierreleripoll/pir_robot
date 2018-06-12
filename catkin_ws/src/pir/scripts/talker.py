@@ -24,8 +24,8 @@ SPEED_TURN = 0.8
 
 pose = Pose()
 position = [0, 0]
-INIT_DIRECTION = "U" # fixe pour l'instant
-orientation = 0
+INIT_DIRECTION = "R" # fixe pour l'instant
+orientation = -0.5
 
 def callbackCmd(data):
 	msg = data.data
@@ -34,6 +34,10 @@ def callbackCmd(data):
 		forward(float(msg[1:]))
 	elif msg[0] == "T" or msg[0]=="t":
 		turn(float(msg[1:]))
+
+	if msg[0] =="P" or msg[0] == "p":
+		pass
+
 	resetOdom()
 
 def odomCallBack(msg):
@@ -86,7 +90,7 @@ def getPosition(node) :
 def forward(dist):
 	resetOdom()
 	global pose
-	print(pose)
+	#print(pose)
 	x0 = pose.position.x
 	y0 = pose.position.y
 	angle = pose.orientation.z * math.pi
@@ -139,9 +143,10 @@ def forward(dist):
 
 #angle en radian/PI
 def turn(angle):
+	print("ANGLE : "+str(angle))
 	resetOdom()
 	global pose
-	print(pose)
+	#print(pose)
 	z0 = pose.orientation.z
 	zF = pose.orientation.z + abs(angle)
 	z=pose.orientation.z
@@ -183,52 +188,43 @@ def turn(angle):
 
 
 def getNodeAngle(node) :
-	if(node.dir == INIT_DIRECTION) :
-		return 0
 
-	else :
-		init_angle = 0 #absolu
-		if(INIT_DIRECTION == "R") :
-			init_angle = 0.5
-		elif(INIT_DIRECTION == "D") :
-			init_angle = 1
-		elif(INIT_DIRECTION == "L") :
-			init_angle = -0.5
-
-		node_angle = 0 #absolu
-		if(node.dir == "R") :
-			node_angle = 0.5
-		elif(node.dir == "D") :
-			node_angle = 1
-		elif(node.dir == "L") :
-			node_angle = -0.5
-
-		if(node_angle - init_angle == 1.5) :
-			return -0.5
-		else :
-			return node_angle - init_angle
+	node_angle = 0 #absolu
+	if(node.dir == "R") :
+		node_angle = -0.5
+	elif(node.dir == "D") :
+		node_angle = 1
+	elif(node.dir == "L") :
+		node_angle = 0.5
+	return node_angle
 
 
 
 def goTo(node) :
 	global position
 	global orientation
-	print("POSITION : " + str(position))
+	print("POSITION : " + str(position) + "ORIENTATION : "+ str(orientation))
 	print("abs(node.x - position[0]) " + str(abs(node.x - position[0])))
 	print("abs(node.y - position[1]) " + str(abs(node.y - position[1])))
 	rospy.sleep(0.3)
-	if(abs(node.x - position[0]) <= DELTA_GOAL) :
-		turn(getNodeAngle(node) - orientation)
+	dz =getNodeAngle(node)-orientation
+	if abs(dz)>DELTA_TURN:
+		if abs(dz) > 1:
+			dz = (-1)*(dz-np.sign(dz))
+		print("\n\nTURN "+str(dz)+'\n\n')
+		turn(dz)
+
 		rospy.sleep(0.3)
-		print("AH" + str(node.y - position[1]))
-		forward(node.y - position[1])
-	elif(abs(node.y - position[1]) <= DELTA_GOAL) :
-		turn(getNodeAngle(node) - orientation)
-		rospy.sleep(0.3)
-		print("AH" + str(node.x - position[0]))
-		forward(node.x - position[0])
-	else :
-		print("We fucked up")
+	else:
+		f= max(abs(node.y - position[1]),abs(node.x - position[0]))
+
+		print("\n\nFORWARD " + str(f)+'\n\n')
+		forward(abs(f))
+		# if(abs(node.x - position[0]) <= DELTA_GOAL) :
+		# 	forward(node.y - position[1])
+		# elif(abs(node.y - position[1]) <= DELTA_GOAL) :
+		# 	forward(node.x - position[0])
+
 	position = getPosition(node)
 	orientation = getNodeAngle(node)
 
@@ -237,6 +233,7 @@ def goTo(node) :
 def followPath(path) :
 	for node in path :
 		print("NEW NODE")
+		print(repr(node))
 		goTo(node)
 
 
@@ -247,10 +244,16 @@ def followPath(path) :
 if __name__ == '__main__':
 	try:
 		print(pose)
-		a = Node(Cell(0.5, 0), "U")
-		b = Node(Cell(0.5, 0), "R")
-		c = Node(Cell(1, 0), "U")
-		path = [a, b, c]
+		a = Node(Cell(0.2, 0), "R")
+		b = Node(Cell(0.2, 0), "U")
+		c = Node(Cell(0.2, 0.2), "U")
+		d = Node(Cell(0.2, 0.2), "L")
+		e = Node(Cell(0, 0.2), "L")
+		f = Node(Cell(0, 0.2), "D")
+		g = Node(Cell(0, 0), "D")
+		h = Node(Cell(0, 0), "R")
+
+		path = [a, b, c, d, e, f, g ,h]
 		followPath(path)
 		#twister()
 		rospy.spin()
