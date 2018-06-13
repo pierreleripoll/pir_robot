@@ -238,6 +238,10 @@ def followPath(path) :
 
 
 
+def getOrientation(x,y):
+	dx = x - position[0]
+	dy = y - position[1]
+	return math.atan2(dy,dx)
 
 
 
@@ -254,7 +258,7 @@ if __name__ == '__main__':
 		h = Node(Cell(0, 0), "R")
 
 		path = [a, b, c, d, e, f, g ,h]
-		followPath(path)
+		#followPath(path)
 		#twister()
 		rospy.spin()
 	except rospy.ROSInterruptException:
