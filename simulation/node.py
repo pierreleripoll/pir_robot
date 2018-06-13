@@ -12,6 +12,8 @@ class Node(Cell):
         self.h = float('inf') # heuristique
         self.parent = None
         self.time = 0
+        self.arrow=[]
+        self.rectangle = []
 
     def equals(self,node):
         if self.isSame(node) and self.dir == node.dir :
