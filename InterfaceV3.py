@@ -15,18 +15,19 @@ class Display:
         self.robots=robots
         self.astar=astar
         self.boxesPerRow=grille.nRows
+        self.boxesPerColumn=grille.nColumns
         self.height=700
         self.width=700
-        self.boxSide=self.height/self.boxesPerRow
+        self.boxSide=self.height/(max(self.boxesPerRow,self.boxesPerColumn))
         self.grille = grille
         self.window=Tk()
-        #Ajouté
+        #Fenêtre secondaire
         self.window.resizable(True,False)
         self.window.title("Workspace")
         self.utility=Toplevel(self.window)
         self.utility.title("Toolbox")
-                #Ajouté
-
+        #variable
+        self.nbr_R=0
         self.utility.transient(self.window)
         self.can=Canvas(self.window, width=self.width, height=self.height, bg='ivory')
         self.can.pack()
@@ -35,6 +36,7 @@ class Display:
         #
         self.booleanstart=False
         self.booleanend=False
+        self.debug=True
         self.click=0
         self.nbrTot=0
         self.start=None
@@ -49,7 +51,7 @@ class Display:
         self.can.bind("<Motion>",self.showBox)
         self.chain.pack()
 
-        for c in range(self.boxesPerRow):
+        for c in range(max(self.boxesPerRow,self.boxesPerColumn)):
                     self.can.create_line(c*self.boxSide, 0,c*self.boxSide,self.height)
                     self.can.create_line(0,c*self.boxSide,self.width,c*self.boxSide)
         if dic :
@@ -91,12 +93,12 @@ class Display:
 
 #RAJOUT -----------------------------------------------------------------
     def showPath(self,path,color,active) :
-        if active==1 or active ==0:
+        if active ==0:
             for node in path:
-                self.showNode(node,color)
-        elif active==0:
+                self.showNode(active,node,color)
+        elif active==1:
             for node in path:
-                self.showNode(node,"white")
+                    self.showNode(active,node,"white")
 
     def choiceColor(self,i):
         if i == 0:
@@ -117,7 +119,7 @@ class Display:
             return "black"
 
 
-    def showNode(self, node,color = None):
+    def showNode(self,active , node,color = None):
 
         x=node.x*self.boxSide
         y=node.y*self.boxSide
@@ -126,22 +128,28 @@ class Display:
         if node.typeC == "S" or node.typeC == "G" :
             color = self.dic[node.typeC]
 
-        rect = self.can.create_rectangle(x,y,x+self.boxSide,y+self.boxSide,fill=color)
         txt = self.can.create_text(x+self.boxSide/2, y+self.boxSide/2,fill="white",activefill="yellow", text=node.txt,  width=self.boxSide)
 
-        if node.dir== "L":
-            arrow=self.can.create_line(x,y+20,x+self.boxSide,y+20, arrow="first")
-        elif node.dir=="R":
-            arrow=self.can.create_line(x+self.boxSide,y+20,x,y+20, arrow="first")
-        if node.dir== "D":
-            arrow=self.can.create_line(x+20,y+self.boxSide,x+20,y, arrow="first")
-        if node.dir== "U":
-            arrow=self.can.create_line(x+20,y,x+20,y+self.boxSide, arrow="first")
-
+        if active==0:
+            rect = self.can.create_rectangle(x,y,x+self.boxSide,y+self.boxSide,fill=color)
+            node.rectangle.append(rect)
+            self.can.itemconfigure(rect,state="normal")
+            if node.dir== "L":
+                arrow=self.can.create_line(x,y+20,x+self.boxSide,y+20, arrow="first")
+            elif node.dir=="R":
+                arrow=self.can.create_line(x+self.boxSide,y+20,x,y+20, arrow="first")
+            if node.dir== "D":
+                arrow=self.can.create_line(x+20,y+self.boxSide,x+20,y, arrow="first")
+            if node.dir== "U":
+                arrow=self.can.create_line(x+20,y,x+20,y+self.boxSide, arrow="first")
+            node.arrow.append(arrow)
+        else:
+            for i,p in enumerate(node.rectangle):
+                i=i
+            self.can.delete(node.rectangle[i])
+            self.can.delete(node.arrow[i])
         self.can.tag_raise(txt)
         #RAJOUT ET PROBLEME ICI-----------------------------------------------------------------
-#LEs Probleme viennent après
-#Probleme avec unbindTheButton ne peut plus agir ensuite
 
 
     def create_robot(self,event):
@@ -152,7 +160,6 @@ class Display:
 
 
         if (self.click==0):
-            print("start positionné")
             self.start=cello
             self.click=1
             self.grille.chgCell(xc,yc,"S")
@@ -170,8 +177,12 @@ class Display:
                 self.colorType(typeC,self.dic[typeC])
             robotStart=Node(self.start,"L")
             robotEnd=Node(self.end,"L")
-            self.nbr_R=self.nbr_R+1
-            newRobot=Robot(str(self.nbr_R),robotStart,robotEnd)
+            self.nbr_R=self.nbr_R+2
+            if self.nbr_R==2 and self.debug==True:
+                newRobot=Robot("1",robotStart,robotEnd)
+                self.debug=False
+            else:
+                newRobot=Robot(str(self.nbr_R),robotStart,robotEnd)
             self.robots.append(newRobot)
             self.grille.setRobots(self.robots)
             newRobot.path=self.astar.findPath(robotStart,robotEnd)
@@ -204,20 +215,28 @@ class Display:
 
 
     def transition_robot(self,Canvas):
-        #pdb.set_trace()
+
         self.callbutton=self.can.bind("<ButtonPress>",self.create_robot)
 
 
 
     #RAJOUT-----------------------------------------------------------------
+    def cb(self,p,i):
+        if self.is_checked.get():
+            self.pathColor=self.choiceColor(i)
+            self.showPath(p.path,self.pathColor,0)
+        else:
+            self.pathColor=self.choiceColor(i)
+            self.showPath(p.path,self.pathColor,1)
+
+
     def afficher_chemin(self):
-            for i, p in enumerate(self.paths):
+            for i, p in enumerate(self.robots):
                 if self.nbrTot==i:
-                    self.is_checked =IntVar(self.utility)
+                    self.is_checked=IntVar(self.utility)
                     self.nbr_R=i
                     self.check = Label(self.utility, text=str(self.is_checked.get()))
-                    self.pathColor=self.choiceColor(i)
-                    self.checkbox = Checkbutton(self.utility,text="Robot n°"+str(i) ,variable=self.is_checked,onvalue=1,offvalue=0,command=partial(self.showPath,p,self.pathColor,self.is_checked.get()))
+                    self.checkbox =Checkbutton(self.utility,text="Robot n°"+str(i+1) ,variable=self.is_checked,onvalue=1,offvalue=0,command=partial(self.cb,p,i))
                     self.checkbox.pack()
                     self.nbrTot=self.nbrTot+1
                 else:
