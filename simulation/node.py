@@ -30,7 +30,7 @@ class Node(Cell):
         return returnV
 
     def __repr__(self):
-        return "("+str(self.x)+","+str(self.y)+","+str(self.typeC)+")"+","+self.dir+",h"+str(self.h)
+        return "("+str(self.x)+","+str(self.y)+")"+","+self.dir+",t"+str(self.time)
 
 
     def reset(self):
@@ -38,5 +38,5 @@ class Node(Cell):
         self.h= math.inf
         self.parent = None
 
-    def msg(self,time):
-        return str(self.x)+","+str(self.y)+","+self.dir+","+str(time)
+    def msg(self):
+        return str(self.x)+","+str(self.y)+","+self.dir+","+str(self.time)
