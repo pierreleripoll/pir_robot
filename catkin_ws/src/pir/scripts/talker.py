@@ -211,8 +211,6 @@ def goTo(node) :
 	global position
 	global orientation
 	print("POSITION : " + str(position) + "ORIENTATION : "+ str(orientation))
-	print("abs(node.x - position[0]) " + str(abs(node.x - position[0])))
-	print("abs(node.y - position[1]) " + str(abs(node.y - position[1])))
 	rospy.sleep(0.3)
 	dz =getNodeAngle(node)-orientation
 	if abs(dz)>DELTA_TURN:
@@ -236,12 +234,16 @@ def goTo(node) :
 	orientation = getNodeAngle(node)
 
 
-# ajouter position erronée
 def followPath(path) :
 	for node in path :
 		print("NEW NODE")
 		print(repr(node))
+		print(" ")
+		init = rospy.get_rostime()
 		goTo(node)
+		end = rospy.get_rostime()
+		chrono = end - init
+		print("TIME : " + str(chrono.secs) + "," + str(chrono.nsecs))
 
 
 
@@ -255,12 +257,12 @@ def getOrientation(x,y):
 if __name__ == '__main__':
 	try:
 		print(pose)
-		a = Node(Cell(0.5, 0), "R")
-		b = Node(Cell(0.5, 0), "U")
-		c = Node(Cell(0.5, 0.5), "U")
-		d = Node(Cell(0.5, 0.5), "L")
-		e = Node(Cell(0, 0.5), "L")
-		f = Node(Cell(0, 0.5), "D")
+		a = Node(Cell(0.8, 0), "R")
+		b = Node(Cell(0.8, 0), "U")
+		c = Node(Cell(0.8, 0.8), "U")
+		d = Node(Cell(0.8, 0.8), "L")
+		e = Node(Cell(0, 0.8), "L")
+		f = Node(Cell(0, 0.8), "D")
 		g = Node(Cell(0, 0), "D")
 		h = Node(Cell(0, 0), "R")
 
