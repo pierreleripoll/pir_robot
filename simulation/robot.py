@@ -1,12 +1,7 @@
-<<<<<<< HEAD
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 
-=======
-# -*- coding: utf-8 -*-
-
->>>>>>> 77c6761e2e00cfbbfedf96a1083fe4d1c15db0be
 import sys
 import math
 
@@ -18,12 +13,12 @@ class Robot :
         self.name = name
         self.start = start
         if start != None :
-			self.start.txt = name
-			self.x = start.x
+            self.start.txt = name
+            self.x = start.x
         self.goal = goal
         if goal != None :
-			self.goal.txt = name
-			self.y = start.y
+            self.goal.txt = name
+            self.y = start.y
         self.path = []
         self.time = [] # liste contenant le temps théorique à chaque noeud du path
 
