@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import http.client
+
 from tkinter import *
 from functools import*
 from astar import AStar
@@ -12,7 +14,7 @@ import pdb
 class Display:
 
     def __init__(self,grille,astar,dic = None,paths= [],robots=[]):
-
+        self.c = http.client.HTTPConnection('localhost', 8000)
         self.dic = dic
         self.paths=paths
         self.robots=robots
@@ -242,5 +244,7 @@ class Display:
                     self.checkbox =Checkbutton(self.utility,text="Robot n°"+str(i+1) ,variable=self.is_checked,onvalue=1,offvalue=0,command=partial(self.cb,p,i))
                     self.checkbox.pack()
                     self.nbrTot=self.nbrTot+1
+                    self.c.request('POST', '/', "{}")
+                    self.c.getresponse()
                 else:
                     pass
