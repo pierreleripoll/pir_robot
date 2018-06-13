@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0, '../')
 from simulation.node import Node
 from simulation.cell import Cell
+from simulation.robot import Robot
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 
@@ -29,6 +30,8 @@ position = [0, 0]
 INIT_DIRECTION = "R" # fixe pour l'instant
 orientation = -math.pi/2
 yaw = 0
+
+robot = Robot("Nevers")
 
 def callbackCmd(data):
 	msg = data.data
@@ -234,16 +237,21 @@ def goTo(node) :
 	orientation = getNodeAngle(node)
 
 
-def followPath(path) :
-	for node in path :
+def followPath() :
+	init = rospy.get_time()
+	for node in robot.path :
 		print("NEW NODE")
 		print(repr(node))
 		print(" ")
-		init = rospy.get_rostime()
 		goTo(node)
-		end = rospy.get_rostime()
+		end = rospy.get_time()
 		chrono = end - init
-		print("TIME : " + str(chrono.secs) + "," + str(chrono.nsecs))
+		print("TIME : " + str(chrono))
+		while(chrono < node.time and not rospy.is_shutdown()) :
+			end = rospy.get_time()
+			chrono = end - init
+			rospy.sleep(0.01)
+		print("TIME : " + str(chrono))
 
 
 
@@ -258,16 +266,24 @@ if __name__ == '__main__':
 	try:
 		print(pose)
 		a = Node(Cell(0.8, 0), "R")
+		a.time = 0
 		b = Node(Cell(0.8, 0), "U")
+		b.time = 6
 		c = Node(Cell(0.8, 0.8), "U")
+		b.time = 12
 		d = Node(Cell(0.8, 0.8), "L")
+		c.time = 18
 		e = Node(Cell(0, 0.8), "L")
+		d.time = 24
 		f = Node(Cell(0, 0.8), "D")
+		f.time = 30
 		g = Node(Cell(0, 0), "D")
+		g.time = 50
 		h = Node(Cell(0, 0), "R")
+		h.time = 56
 
-		path = [a, b, c, d, e, f, g ,h]
-		followPath(path)
+		robot.path = [a, b, c, d, e, f, g ,h] # après on récupérera par message
+		followPath()
 		#twister()
 		rospy.spin()
 	except rospy.ROSInterruptException:
