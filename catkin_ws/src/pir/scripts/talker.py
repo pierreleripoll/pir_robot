@@ -15,17 +15,20 @@ import sys
 sys.path.insert(0, '../')
 from simulation.node import Node
 from simulation.cell import Cell
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
+
 
 
 DELTA_GOAL = 0.01
-DELTA_TURN = 0.002
+DELTA_TURN = 0.08
 SPEED_FORWARD = 0.2
 SPEED_TURN = 0.8
 
 pose = Pose()
 position = [0, 0]
 INIT_DIRECTION = "R" # fixe pour l'instant
-orientation = -0.5
+orientation = -math.pi/2
+yaw = 0
 
 def callbackCmd(data):
 	msg = data.data
@@ -43,6 +46,10 @@ def callbackCmd(data):
 def odomCallBack(msg):
 	global pose
 	pose = msg.pose.pose
+	global roll, pitch, yaw
+	orientation_q = msg.pose.pose.orientation
+	orientation_list = [orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w]
+	(roll, pitch, yaw) = euler_from_quaternion (orientation_list)
 
 
 
@@ -93,7 +100,7 @@ def forward(dist):
 	#print(pose)
 	x0 = pose.position.x
 	y0 = pose.position.y
-	angle = pose.orientation.z * math.pi
+	angle = yaw
 	print("teta "+str(angle))
 	dx = math.cos(angle) * dist
 	dy = math.sin(angle) * dist
@@ -145,24 +152,24 @@ def forward(dist):
 def turn(angle):
 	print("ANGLE : "+str(angle))
 	resetOdom()
-	global pose
+	global yaw
 	#print(pose)
-	z0 = pose.orientation.z
-	zF = pose.orientation.z + abs(angle)
-	z=pose.orientation.z
+	z0 = yaw
+	zF = yaw + abs(angle)
+	z=yaw
 	zcount = 0
 	goal = False
 	dz = 0
 	print "z0 ",z0," zF ", zF
 	deriv = abs(zcount-abs(angle))
 	while not goal and not rospy.is_shutdown() :
-		if np.sign(pose.orientation.z) == np.sign(z):
-			dz = abs(pose.orientation.z -z)
+		if np.sign(yaw) == np.sign(z):
+			dz = abs(yaw -z)
 		else:
-			z=pose.orientation.z
+			z=yaw
 		if dz>0.005:
 			zcount += dz
-			z=pose.orientation.z
+			z=yaw
 	#	print "("+str(z)+")"
 		if abs(zcount-abs(angle))>deriv :
 			print("ON DEPASSE")
@@ -191,11 +198,11 @@ def getNodeAngle(node) :
 
 	node_angle = 0 #absolu
 	if(node.dir == "R") :
-		node_angle = -0.5
+		node_angle = -math.pi/2
 	elif(node.dir == "D") :
-		node_angle = 1
+		node_angle = math.pi
 	elif(node.dir == "L") :
-		node_angle = 0.5
+		node_angle = math.pi/2
 	return node_angle
 
 
@@ -209,8 +216,8 @@ def goTo(node) :
 	rospy.sleep(0.3)
 	dz =getNodeAngle(node)-orientation
 	if abs(dz)>DELTA_TURN:
-		if abs(dz) > 1:
-			dz = (-1)*(dz-np.sign(dz))
+		if abs(dz) > math.pi:
+			dz = (-1)*(dz-(np.sign(dz)*math.pi))
 		print("\n\nTURN "+str(dz)+'\n\n')
 		turn(dz)
 
@@ -248,17 +255,17 @@ def getOrientation(x,y):
 if __name__ == '__main__':
 	try:
 		print(pose)
-		a = Node(Cell(0.2, 0), "R")
-		b = Node(Cell(0.2, 0), "U")
-		c = Node(Cell(0.2, 0.2), "U")
-		d = Node(Cell(0.2, 0.2), "L")
-		e = Node(Cell(0, 0.2), "L")
-		f = Node(Cell(0, 0.2), "D")
+		a = Node(Cell(0.5, 0), "R")
+		b = Node(Cell(0.5, 0), "U")
+		c = Node(Cell(0.5, 0.5), "U")
+		d = Node(Cell(0.5, 0.5), "L")
+		e = Node(Cell(0, 0.5), "L")
+		f = Node(Cell(0, 0.5), "D")
 		g = Node(Cell(0, 0), "D")
 		h = Node(Cell(0, 0), "R")
 
 		path = [a, b, c, d, e, f, g ,h]
-		#followPath(path)
+		followPath(path)
 		#twister()
 		rospy.spin()
 	except rospy.ROSInterruptException:
