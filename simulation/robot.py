@@ -41,6 +41,9 @@ class Robot :
         self.time.append(0)
         for i in range(1, len(self.path)) :
             self.time.append(self.time[i-1] + 10 + 5*self.isTurning(self.path[i])) # constantes arbitraires
+        for i, node in enumerate(self.path) :
+            node.time=self.time[i]
+
 
     # Induit un délai supplémentaire avant d'atteindre le noeud donné en paramètre
     def wait(self, node, delay) :
@@ -55,8 +58,8 @@ class Robot :
 
     def createMsg(self):
         msg = self.name
-        for i,node in enumerate(self.path):
-            msg += "/"+node.msg(self.time[i])
+        for node in self.path:
+            msg += "/"+node.msg()
         return msg
 
     def readMsg(self,msg):
