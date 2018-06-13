@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 
+=======
+# -*- coding: utf-8 -*-
+
+>>>>>>> 77c6761e2e00cfbbfedf96a1083fe4d1c15db0be
 import sys
 import math
 
@@ -9,16 +14,18 @@ from node import Node
 from cell import Cell
 
 class Robot :
-    def __init__(self, name, start, goal) :
+    def __init__(self, name, start=None, goal=None) :
         self.name = name
         self.start = start
-        self.start.txt = name
+        if start != None :
+			self.start.txt = name
+			self.x = start.x
         self.goal = goal
-        self.goal.txt = name
+        if goal != None :
+			self.goal.txt = name
+			self.y = start.y
         self.path = []
         self.time = [] # liste contenant le temps théorique à chaque noeud du path
-        self.x = start.x
-        self.y = start.y
 
     # Renvoie 1 si le robot doit tourner pour atteindre ce noeud, 0 sinon
     def isTurning(self, node) :
@@ -76,6 +83,6 @@ class Robot :
                 print(s)
                 cell = Cell(int(s[0]),int(s[1]))
                 node = Node(cell,s[2])
-                node.time = int(s[3])
+                node.time = float(s[3])
                 path.append(node)
         print(path)
