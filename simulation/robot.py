@@ -2,6 +2,7 @@ import sys
 import math
 
 from node import Node
+from cell import Cell
 
 class Robot :
     def __init__(self, name, start, goal) :
@@ -51,3 +52,23 @@ class Robot :
 
     def __repr__(self) :
         return "Robot " + str(self.name) + " is at node (" + str(self.x) + "," + str(self.y) + ") and going to (" + str(self.goal.x) + "," + str(self.goal.y) + ")"
+
+    def createMsg(self):
+        msg = self.name
+        for i,node in enumerate(self.path):
+            msg += "/"+node.msg(self.time[i])
+        return msg
+
+    def readMsg(self,msg):
+        cmd = msg.split('/')
+        if cmd[0]==self.name:
+            path = []
+            for s in cmd[1:]:
+                s = s.split(',')
+                print("Node :")
+                print(s)
+                cell = Cell(int(s[0]),int(s[1]))
+                node = Node(cell,s[2])
+                node.time = int(s[3])
+                path.append(node)
+        print(path)
