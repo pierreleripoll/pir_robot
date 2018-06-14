@@ -11,7 +11,6 @@ from coordination import Coordination
 class Display:
 
     def __init__(self,grille,astar,dic = None,paths= [],robots=[]):
-        self.c = http.client.HTTPConnection('localhost', 8000)
         self.dic = dic
         self.paths=paths
         self.robots=robots
