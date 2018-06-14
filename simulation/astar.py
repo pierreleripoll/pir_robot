@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
+# -*- coding: utf-8 -*
 import sys
 import math
 import time
@@ -47,8 +46,12 @@ class AStar:
         return list(reversed(path))
 
     def findPath(self,start,goal):
-        self.openList.clear()
-        self.closedList.clear()
+        #self.openList.clear()
+        del self.openList
+        self.openList=[]
+        #self.closedList.clear()
+        del self.closedList
+        self.closedList = []
         self.addNodeToOpenList(start.copy(),goal)
         notFinish = 1
         #print("FindPath : ",repr(start)," to ",repr(goal),file=sys.stderr)

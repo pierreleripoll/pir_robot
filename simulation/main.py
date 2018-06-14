@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from node import Node
 from grille import Grille
@@ -24,44 +22,44 @@ robots = []
 #Liste des chemins
 paths=[]
 # Robot A
-aStart = Node(Cell(8, 12,"S"),"L")
-aGoal = Node(Cell(13, 12,"G"),"L")
-a = Robot("A", aStart, aGoal)
-print(a)
-robots.append(a)
+#aStart = Node(Cell(8, 12,"S"),"L")
+#aGoal = Node(Cell(13, 12,"G"),"L")
+#a = Robot("A", aStart, aGoal)
+#print(a)
+#robots.append(a)
 
 # Robot B
-bStart = Node(Cell(11, 12,"S"),"L")
-bGoal = Node(Cell(9, 13,"G"),"L")
-b = Robot("B", bStart, bGoal)
-print(b)
-robots.append(b)
+#bStart = Node(Cell(11, 12,"S"),"L")
+#bGoal = Node(Cell(9, 13,"G"),"L")
+#b = Robot("B", bStart, bGoal)
+#print(b)
+#robots.append(b)
 
 
 astar = AStar(lab)
 
 # Liste des chemins des robots
-aPath = astar.findPath(aStart,aGoal)
-paths.append(aPath)
-a.path = aPath
+#aPath = astar.findPath(aStart,aGoal)
+#paths.append(aPath)
+#a.path = aPath
 
-a.setTime()
-bPath = astar.findPath(bStart,bGoal)
-b.path = bPath
-paths.append(bPath)
-b.setTime()
+#a.setTime()
+#bPath = astar.findPath(bStart,bGoal)
+#b.path = bPath
+#paths.append(bPath)
+#b.setTime()
 
-print("------ a.time ------")
-print(a.time)
-print("--------------------")
+#print("------ a.time ------")
+#print(a.time)
+#print("--------------------")
 
-print("------ b.time ------")
-print(b.time)
-print("--------------------")
+#print("------ b.time ------")
+#print(b.time)
+#print("--------------------")
 
-coord = Coordination(robots)
+#coord = Coordination(robots)
 
-print("validatePath(b) : " + str(coord.validatePath(b)))
+#print("validatePath(b) : " + str(coord.validatePath(b)))
 
 
 dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
