@@ -8,10 +8,9 @@ from coordination import Coordination
 
 from InterfaceV3 import *
 
-lab = Grille(10,6)
-lab.setRect(1,1,4,8,".")
-lab.setRect(3,6,1,2,"?");
-lab.setRect(3,2,1,1,"?");
+lab = Grille(8,4)
+lab.setRect(4,8,0,0,".")
+
 
 # Liste des robots
 robots = []

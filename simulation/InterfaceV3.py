@@ -1,17 +1,16 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-import sys
-sys.path.insert(0, '../')
+# -*- coding: utf-8 -*
 
 from Tkinter import *
 from functools import*
-from simulation.astar import AStar
-from simulation.node import Node
-from simulation.robot import Robot
-from simulation.cell import Cell
-from simulation.coordination import Coordination
-import rospy
-from std_msgs.msg import String
+from astar import AStar
+from node import Node
+from robot import Robot
+from cell import Cell
+from coordination import Coordination
+#import rospy
+#from std_msgs.msg import String
+
 
 
 class Display:
@@ -33,7 +32,8 @@ class Display:
         #Fenetre secondaire
         self.utility=Toplevel(self.window)
         self.utility.title("Toolbox")
-        self.msgButton = Button(self.utility, text='Envoyer les chemins aux robots', command=self.sendRobotsMsgs)
+        self.msgButton = Button(self.utility, text='Envoyer les chemins aux robots')#self.sendRobotsMsgs)
+        self.msgButton.pack()
         #Fenetre principal
         self.utility.transient(self.window)
         self.can=Canvas(self.window, width=self.boxSide*self.boxesPerColumn, height=self.boxSide*self.boxesPerRow, bg='ivory')
@@ -51,16 +51,14 @@ class Display:
         #element pour afficher les robots
         self.brobot=Button(self.utility, text='Créer robot',command=partial(self.transition_robot,self.can))
         self.brobot.pack(side="left")
-        self.msgButton.pack()
         self.chain = Label(self.window)
         self.can.bind("<Motion>",self.showBox)
         self.chain.pack()
 
-        self.masterPub = rospy.Publisher("master", String, queue_size=10)
-        rospy.init_node("master")
-
+        #self.masterPub = rospy.Publisher("master", String, queue_size=10)
+        #rospy.init_node("master")
 #Cree la grille sur l ecran--------------------------------------------------
-        for c in range(min(self.boxesPerRow,self.boxesPerColumn)):
+        for c in range(max(self.boxesPerRow,self.boxesPerColumn)):
                     self.can.create_line(self.width*self.boxSide, 0,self.width*self.boxSide,self.width)
                     self.can.create_line(0,self.height*self.boxSide,self.height,self.height*self.boxSide)
         if dic :
@@ -182,11 +180,13 @@ class Display:
             self.grille.chgCell(xc,yc,"G")
             for typeC in self.dic:
                 self.colorType(typeC,self.dic[typeC])
-            robotStart=Node(self.start,"L")
-            robotEnd=Node(self.end,"L")
             if self.Rname == None:
                 self.popup()
                 self.window.wait_window(self.top)
+                print(self.directionStart)
+                self.directionStart=self.var.get()
+                self.directionEnd=self.var2.get()
+                print(self.directionStart)
                 robotStart=Node(self.start,self.directionStart)
                 robotEnd=Node(self.end,self.directionEnd)
                 newRobot=Robot(self.Rname,robotStart,robotEnd)
@@ -254,20 +254,21 @@ class Display:
         self.l.pack()
         self.e=Entry(top)
         self.e.pack()
+        self.var = StringVar(top,"L")
+        self.var2 = StringVar(top,"L")
         self.lD=Label(top,text="Veuilliez choisir la direction de départ votre Robot")
-        choices = ['L', 'R', 'U','D']
-        variableD = StringVar(top)
-        variableD.set('L')
-        rollDownD=Combobox(top, values = choices)
-        self.directionStart=variableD.get()
-        rollDown.pack()
+        self.lD.pack()
+        Radiobutton(top, text = "Left", variable=self.var, value = 'L').pack(anchor="w")
+        Radiobutton(top, text = "Right", variable=self.var, value = 'R').pack(anchor="w")
+        Radiobutton(top, text = "Up", variable=self.var, value ="U").pack(anchor="w")
+        Radiobutton(top, text = "Down", variable=self.var, value = "D").pack(anchor="w")
         self.lE=Label(top,text="Veuilliez choisir la direction d'arrivée votre Robot")
-        choices2 = ['L', 'R', 'U','D']
-        variableE = StringVar(top)
-        variableE.set('L')
-        rollDownE=Combobox(top, values = choices2)
-        self.directionStart=variableE.get()
-        rollDownE.pack()
+        self.lE.pack()
+        Radiobutton(top, text = "Left", variable=self.var2, value = "L").pack(anchor="w")
+        Radiobutton(top, text = "Right", variable=self.var2, value = "R").pack(anchor="w")
+        Radiobutton(top, text = "Up", variable=self.var2, value ="U").pack(anchor="w")
+        Radiobutton(top, text = "Down", variable=self.var2, value = "D").pack(anchor="w")
+        print(self.var)
         self.b=Button(top,text='Ok',command=self.cleanup)
         self.b.pack()
 
@@ -275,11 +276,11 @@ class Display:
         self.Rname=self.e.get()
         self.top.destroy()
 
-    def sendRobotsMsgs(self) :
-        try:
-            print("master")
-            for robot in self.robots :
-                robotMsg = robot.createMsg()
-                self.masterPub.publish(robotMsg)
-        except rospy.ROSInterruptException:
-            pass
+	# def sendRobotsMsgs(self) :
+    #     try:
+    #         print("master")
+    #         for robot in self.robots :
+    #             robotMsg = robot.createMsg()
+    #             self.masterPub.publish(robotMsg)
+    #     except rospy.ROSInterruptException:
+    #         pass
