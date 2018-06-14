@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys
 import math
 
@@ -11,10 +13,10 @@ class Robot :
         self.goal = goal
         self.goal.txt = name
         self.path = []
-        self.time = [] # liste contenant le temps théorique à chaque noeud du path
+        self.time = [] # liste contenant le temps theorique a chaque noeud du path
         self.x = start.x
         self.y = start.y
-
+        self.state=None#etat de la checkbox du robot pour l interface
     # Renvoie 1 si le robot doit tourner pour atteindre ce noeud, 0 sinon
     def isTurning(self, node) :
         index = 1
@@ -35,13 +37,13 @@ class Robot :
         else :
             return 0
 
-    # Calcule le temps à chaque noeud du path
+    # Calcule le temps a chaque noeud du path
     def setTime(self) :
         self.time.append(0)
         for i in range(1, len(self.path)) :
             self.time.append(self.time[i-1] + 10 + 5*self.isTurning(self.path[i])) # constantes arbitraires
 
-    # Induit un délai supplémentaire avant d'atteindre le noeud donné en paramètre
+    # Induit un delai supplementaire avant d'atteindre le noeud donne en parametre
     def wait(self, node, delay) :
         index = 0
         while(self.path[index].x != node.x or self.path[index].y != node.y) :

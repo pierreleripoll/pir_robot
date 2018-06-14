@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import math
 from cell import Cell
 
@@ -9,7 +11,7 @@ class Node(Cell):
         Cell.__init__(self, cell.x, cell.y, cell.typeC, cell.txt)
         self.dir = dir
         self.cout = 0
-        self.h = math.inf # heuristique
+        self.h = float('inf') # heuristique
         self.parent = None
         self.rectangle=[]
         self.arrow=[]
