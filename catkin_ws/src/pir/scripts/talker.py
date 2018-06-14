@@ -33,7 +33,7 @@ yaw = 0
 
 robot = Robot("Nevers")
 
-def callbackCmd(data):
+def cmdCallBack(data):
 	msg = data.data
 	print data.data
 	if msg[0] == "F" or msg[0] == "f":
@@ -54,14 +54,17 @@ def odomCallBack(msg):
 	orientation_list = [orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w]
 	(roll, pitch, yaw) = euler_from_quaternion (orientation_list)
 
+def masterCallBack(msg) :
+	robot.readMsg(msg)
 
 
 twistPub=rospy.Publisher("/cmd_vel_mux/input/teleop",Twist, queue_size=10)
 rospy.init_node("twister")
 motion = Twist()
 odomSub = rospy.Subscriber("/odom", Odometry, odomCallBack)
-cmdSub = rospy.Subscriber("/command", String, callbackCmd)
+cmdSub = rospy.Subscriber("/command", String, cmdCallBack)
 reset_odom = rospy.Publisher('/mobile_base/commands/reset_odometry', Empty, queue_size=10)
+masterSub = rospy.Subscriber("/master", String)
 
 
 def resetOdom():
@@ -69,7 +72,7 @@ def resetOdom():
 	while time() - timer < 0.25:
 	    reset_odom.publish(Empty())
 
-def callbackCmd(msg):
+def cmdCallBack(msg):
 	print(msg)
 	if msg[0] == "F":
 		forward(double(msg[1:]))
@@ -240,9 +243,9 @@ def goTo(node) :
 def followPath() :
 	init = rospy.get_time()
 	for node in robot.path :
+		print("-------")
 		print("NEW NODE")
 		print(repr(node))
-		print(" ")
 		goTo(node)
 		end = rospy.get_time()
 		chrono = end - init
@@ -252,6 +255,7 @@ def followPath() :
 			chrono = end - init
 			rospy.sleep(0.01)
 		print("TIME : " + str(chrono))
+		print("-------")
 
 
 
@@ -265,25 +269,28 @@ def getOrientation(x,y):
 if __name__ == '__main__':
 	try:
 		print(pose)
-		a = Node(Cell(0.8, 0), "R")
-		a.time = 0
-		b = Node(Cell(0.8, 0), "U")
-		b.time = 6
-		c = Node(Cell(0.8, 0.8), "U")
-		b.time = 12
-		d = Node(Cell(0.8, 0.8), "L")
-		c.time = 18
-		e = Node(Cell(0, 0.8), "L")
-		d.time = 24
-		f = Node(Cell(0, 0.8), "D")
-		f.time = 30
-		g = Node(Cell(0, 0), "D")
-		g.time = 50
-		h = Node(Cell(0, 0), "R")
-		h.time = 56
+		#a = Node(Cell(0.8, 0), "R")
+		#a.time = 0
+		#b = Node(Cell(0.8, 0), "U")
+		#b.time = 6
+		#c = Node(Cell(0.8, 0.8), "U")
+		#b.time = 12
+		#d = Node(Cell(0.8, 0.8), "L")
+		#c.time = 18
+		#e = Node(Cell(0, 0.8), "L")
+		#d.time = 24
+		#f = Node(Cell(0, 0.8), "D")
+		#f.time = 30
+		#g = Node(Cell(0, 0), "D")
+		#g.time = 50
+		#h = Node(Cell(0, 0), "R")
+		#h.time = 56
 
-		robot.path = [a, b, c, d, e, f, g ,h] # après on récupérera par message
-		followPath()
+		#robot.path = [a, b, c, d, e, f, g ,h] # après on récupérera par message
+		
+		print(robot.path)
+		#followPath()
+		
 		#twister()
 		rospy.spin()
 	except rospy.ROSInterruptException:
