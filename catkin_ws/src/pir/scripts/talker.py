@@ -21,7 +21,7 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 BOX_SIZE = 0.6
 DELTA_GOAL = 0.01
-DELTA_TURN = 0.001
+DELTA_TURN = 0.08
 SPEED_FORWARD = 0.2
 SPEED_TURN = 0.8
 
@@ -74,7 +74,7 @@ masterSub = rospy.Subscriber("/master", String, masterCallBack)
 
 def resetOdom():
 	timer = time()
-	while time() - timer < 0.25:
+	while time() - timer < 0.5:
 	    reset_odom.publish(Empty())
 
 
@@ -155,6 +155,7 @@ def forward(dist):
 def turn(angle):
 	print("ANGLE : "+str(angle))
 	resetOdom()
+	rospy.sleep(0.3)
 	global yaw
 	global pose
 	print("INIT YAW :"+str(yaw))
@@ -169,7 +170,6 @@ def turn(angle):
 	deriv = abs(zcount-abs(angle))
 	while not goal and not rospy.is_shutdown() :
 		print yaw
-		yaw = max(0,yaw)
 		if np.sign(yaw) == np.sign(z):
 			dz = abs(yaw -z)
 		else:
@@ -177,8 +177,7 @@ def turn(angle):
 		if dz>0.005:
 			zcount += dz
 			z=yaw
-	#	print "("+str(z)+")"
-		if abs(zcount-abs(angle))>deriv :
+		if abs(zcount-abs(angle))>deriv  :
 			print("ON DEPASSE")
 			goal = True
 		deriv = abs(zcount-abs(angle))
@@ -191,13 +190,13 @@ def turn(angle):
 				motion.angular.z = -SPEED_TURN
 		else:
 			goal = True
-			print("GOAL REACHED")
+			print("GOAL REACHED DERIV "+str(deriv))
 
 		twistPub.publish(motion)
 		rospy.sleep(0.01)
 	motion.angular.z = 0
 	twistPub.publish(motion)
-	print("END TURN : "+str(yaw))
+	print("END TURN YAW : "+str(yaw)+ " COUNT :"+str(zcount))
 
 
 

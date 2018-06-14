@@ -12,6 +12,8 @@ from simulation.robot import Robot
 from simulation.coordination import Coordination
 
 from simulation.InterfaceV3 import *
+lab = Grille(8,4)
+lab.setRect(0,0,4,8,".")
 
 lab = Grille(10,6)
 lab.setRect(1,1,4,8,".")
