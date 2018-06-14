@@ -32,6 +32,12 @@ disp = Display(lab, astar, dic)
 masterPub = rospy.Publisher("master", String, queue_size=10)
 rospy.init_node("master")
 
-for robot in disp.robots :
-	robotMsg = robot.createMsg()
-	masterPub.publish(robotMsg)
+if __name__ == '__main__':
+	try:
+		print("master")
+		for robot in disp.robots :
+			robotMsg = robot.createMsg()
+			masterPub.publish(robotMsg)
+		rospy.spin()
+	except rospy.ROSInterruptException:
+		pass

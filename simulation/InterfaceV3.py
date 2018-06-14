@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 from Tkinter import *
 from functools import*
 from astar import AStar
@@ -7,6 +8,12 @@ from node import Node
 from robot import Robot
 from cell import Cell
 from coordination import Coordination
+import rospy
+from std_msgs.msg import String
+
+masterPub = rospy.Publisher("master", String, queue_size=10)
+rospy.init_node("master")
+
 class Display:
 
     def __init__(self,grille,astar,dic = None,paths= [],robots=[]):
@@ -27,6 +34,8 @@ class Display:
         #Fenetre secondaire
         self.utility=Toplevel(self.window)
         self.utility.title("Toolbox")
+        self.msgButton = Button(self.utility, text='Envoyer les chemins aux robots', command=sendRobotsMsgs)
+        self.msgButton.pack()
         #Fenetre principal
         self.utility.transient(self.window)
         self.can=Canvas(self.window, width=self.width, height=self.height, bg='ivory')
@@ -209,7 +218,6 @@ class Display:
 
 
     def transition_robot(self,Canvas):
-
         self.callbutton=self.can.bind("<ButtonPress>",self.create_robot)
 
 
@@ -240,6 +248,16 @@ class Display:
         self.e.pack()
         self.b=Button(top,text='Ok',command=self.cleanup)
         self.b.pack()
+        
     def cleanup(self):
         self.Rname=self.e.get()
         self.top.destroy()
+
+	def sendRobotsMsgs() :
+		try:
+			print("master")
+			for robot in disp.robots :
+				robotMsg = robot.createMsg()
+				masterPub.publish(robotMsg)
+		except rospy.ROSInterruptException:
+			pass
