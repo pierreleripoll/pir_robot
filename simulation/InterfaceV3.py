@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from tkinter import *
+from Tkinter import *
 from functools import*
 from astar import AStar
 from node import Node
 from robot import Robot
 from cell import Cell
 from coordination import Coordination
-import pdb
 class Display:
 
     def __init__(self,grille,astar,dic = None,paths= [],robots=[]):
@@ -24,41 +22,34 @@ class Display:
         self.boxSide=self.height/(max(self.boxesPerRow,self.boxesPerColumn))
         self.grille = grille
         self.window=Tk()
-        #Fenêtre secondaire
         self.window.resizable(True,False)
         self.window.title("Workspace")
+        #Fenetre secondaire
         self.utility=Toplevel(self.window)
         self.utility.title("Toolbox")
-        #variable
-        self.nbr_R=0
+        #Fenetre principal
         self.utility.transient(self.window)
         self.can=Canvas(self.window, width=self.width, height=self.height, bg='ivory')
         self.can.pack()
-        self.bstop=Button(self.window, text='Fermer la fenêtre', command=self.window.destroy)
+        self.bstop=Button(self.window, text='Fermer les fenêtres', command=self.window.destroy)
         self.bstop.pack()
-        #
-        self.booleanstart=False
-        self.booleanend=False
-        self.debug=True
+        #Pour creation de robots
+        self.nbR=0
+        self.Rname=None
         self.click=0
-        self.nbrTot=0
         self.start=None
         self.end=None
+        #element pour afficher les robots
         self.brobot=Button(self.utility, text='Créer robot',command=partial(self.transition_robot,self.can))
         self.brobot.pack(side="left")
-            #
-        #CheckButton Ajouté
-        self.afficher_chemin()
-        #
         self.chain = Label(self.window)
         self.can.bind("<Motion>",self.showBox)
         self.chain.pack()
-
+#Cree la grille sur l ecran--------------------------------------------------
         for c in range(max(self.boxesPerRow,self.boxesPerColumn)):
                     self.can.create_line(c*self.boxSide, 0,c*self.boxSide,self.height)
                     self.can.create_line(0,c*self.boxSide,self.width,c*self.boxSide)
         if dic :
-            #print("Dic exists :",dic)
             self.dic = dic
             for typeC in dic:
                 self.colorType(typeC,dic[typeC])
@@ -94,7 +85,7 @@ class Display:
         for typeC in self.dic:
             self.colorType(typeC,self.dic[typeC])
 
-#RAJOUT -----------------------------------------------------------------
+#Fonctions qui affiche les chemins -----------------------------------------------------------------
     def showPath(self,path,color,active) :
         if active ==0:
             for node in path:
@@ -152,9 +143,9 @@ class Display:
             self.can.delete(node.rectangle[i])
             self.can.delete(node.arrow[i])
         self.can.tag_raise(txt)
-        #RAJOUT ET PROBLEME ICI-----------------------------------------------------------------
 
 
+#Fonction qui crée les robots-----------------------------------------------------------------
     def create_robot(self,event):
         print(event.x)
         print(event.y)
@@ -172,43 +163,43 @@ class Display:
 
         elif(self.click==1):
             print("Robot créé")
-            print("end positionné")
             self.end=cello
             self.grille.chgCell(xc,yc,"G")
-            print("j'y suis arrivé FIN")
             for typeC in self.dic:
                 self.colorType(typeC,self.dic[typeC])
             robotStart=Node(self.start,"L")
             robotEnd=Node(self.end,"L")
-            self.nbr_R=self.nbr_R+2
-            if self.nbr_R==2 and self.debug==True:
-                newRobot=Robot("1",robotStart,robotEnd)
-                self.debug=False
-            else:
-                newRobot=Robot(str(self.nbr_R),robotStart,robotEnd)
-            self.robots.append(newRobot)
-            self.grille.setRobots(self.robots)
-            newRobot.path=self.astar.findPath(robotStart,robotEnd)
-            self.paths.append(newRobot.path)
-
-
-            coor = Coordination(self.robots)
-            check , node = coor.validatePath(newRobot)
-            print("\n",check,repr(node))
-
-            if node:
-                node.changeType("?")
-                self.grille.setCell(node)
+            if self.Rname == None:
+                self.popup()
+                self.window.wait_window(self.top)
+                newRobot=Robot(self.Rname,robotStart,robotEnd)
+                self.nbR=self.nbR+1
+                self.robots.append(newRobot)
+                self.grille.setRobots(self.robots)
                 newRobot.path=self.astar.findPath(robotStart,robotEnd)
                 self.paths.append(newRobot.path)
-                node.changeType(".")
-                self.grille.setCell(node)
-                check , node = coor.validatePath(newRobot)
-                print("\n\nAFTER CHANGING OBSTACLE\n",check,repr(node))
 
-            newRobot.setTime()
-            self.afficher_chemin()
-            self.click=0
+
+                coor = Coordination(self.robots)
+                check , node = coor.validatePath(newRobot)
+                print("\n",check,repr(node))
+
+                if node:
+                    node.changeType("?")
+                    self.grille.setCell(node)
+                    newRobot.path=self.astar.findPath(robotStart,robotEnd)
+                    self.paths.append(newRobot.path)
+                    node.changeType(".")
+                    self.grille.setCell(node)
+                    check , node = coor.validatePath(newRobot)
+                    print("\n\nAFTER CHANGING OBSTACLE\n",check,repr(node))
+
+                newRobot.setTime()
+                self.afficher_chemin(newRobot,self.nbR)
+                self.click=0
+            else:
+                pass
+
             self.can.unbind("<ButtonPress>")
 
 
@@ -223,9 +214,9 @@ class Display:
 
 
 
-    #RAJOUT-----------------------------------------------------------------
+    #Afficher des checkbox dynamiques pour les robots-----------------------------------------------------------------
     def cb(self,p,i):
-        if self.is_checked.get():
+        if p.state.get():
             self.pathColor=self.choiceColor(i)
             self.showPath(p.path,self.pathColor,0)
         else:
@@ -233,14 +224,22 @@ class Display:
             self.showPath(p.path,self.pathColor,1)
 
 
-    def afficher_chemin(self):
-            for i, p in enumerate(self.robots):
-                if self.nbrTot==i:
-                    self.is_checked=IntVar(self.utility)
-                    self.nbr_R=i
-                    self.check = Label(self.utility, text=str(self.is_checked.get()))
-                    self.checkbox =Checkbutton(self.utility,text="Robot n°"+str(i+1) ,variable=self.is_checked,onvalue=1,offvalue=0,command=partial(self.cb,p,i))
-                    self.checkbox.pack()
-                    self.nbrTot=self.nbrTot+1
-                else:
-                    pass
+    def afficher_chemin(self,p,i):
+        p.state=IntVar(self.utility)
+        self.check = Label(self.utility, text=str(p.state.get()))
+        self.checkbox =Checkbutton(self.utility,text=self.Rname ,variable=p.state,onvalue=1,offvalue=0,command=lambda m=p, n=i: self.cb(m,n))
+        self.checkbox.pack(side="top",anchor="w")
+        self.Rname=None
+
+#Fenetre pour nommer les robots -----------------------------------------------------------------
+    def popup(self):
+        top=self.top=Toplevel(self.utility)
+        self.l=Label(top,text="Veuilliez rentrer le nom de votre Robot")
+        self.l.pack()
+        self.e=Entry(top)
+        self.e.pack()
+        self.b=Button(top,text='Ok',command=self.cleanup)
+        self.b.pack()
+    def cleanup(self):
+        self.Rname=self.e.get()
+        self.top.destroy()
