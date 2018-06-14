@@ -13,6 +13,7 @@ class Node(Cell):
         self.parent = None
         self.rectangle=[]
         self.arrow=[]
+        self.time = 0
 
     def equals(self,node):
         if self.isSame(node) and self.dir == node.dir :
@@ -31,7 +32,7 @@ class Node(Cell):
         return returnV
 
     def __repr__(self):
-        return "("+str(self.x)+","+str(self.y)+","+str(self.typeC)+")"+","+self.dir+",h"+str(self.h)
+        return "("+str(self.x)+","+str(self.y)+")"+","+self.dir+",t"+str(self.time)
 
 
 

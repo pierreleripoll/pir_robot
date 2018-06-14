@@ -4,18 +4,22 @@ import sys
 import math
 
 from node import Node
+from cell import Cell
 
 class Robot :
-    def __init__(self, name, start, goal) :
+    def __init__(self, name, start=None, goal= None) :
         self.name = name
         self.start = start
-        self.start.txt = name
+        if start :
+            self.start.txt = name
         self.goal = goal
-        self.goal.txt = name
+        if goal :
+            self.goal.txt = name
         self.path = []
         self.time = [] # liste contenant le temps théorique à chaque noeud du path
-        self.x = start.x
-        self.y = start.y
+        if start :
+            self.x = start.x
+            self.y = start.y
         self.state=None#Etat de la checkbox du robot (affichage)
     # Renvoie 1 si le robot doit tourner pour atteindre ce noeud, 0 sinon
     def isTurning(self, node) :
@@ -76,3 +80,6 @@ class Robot :
                 node.time = float(s[3])
                 path.append(node)
         print(path)
+        self.start = path[0]
+        self.goal = path[-1]
+        self.path = path

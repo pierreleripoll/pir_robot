@@ -54,8 +54,13 @@ def odomCallBack(msg):
 	orientation_list = [orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w]
 	(roll, pitch, yaw) = euler_from_quaternion (orientation_list)
 
-def masterCallBack(msg) :
+def masterCallBack(data) :
+	print("MASTERCALLBACK")
+	msg = data.data
+	print msg
 	robot.readMsg(msg)
+	print robot.path
+	followPath()
 
 
 twistPub=rospy.Publisher("/cmd_vel_mux/input/teleop",Twist, queue_size=10)
@@ -64,21 +69,13 @@ motion = Twist()
 odomSub = rospy.Subscriber("/odom", Odometry, odomCallBack)
 cmdSub = rospy.Subscriber("/command", String, cmdCallBack)
 reset_odom = rospy.Publisher('/mobile_base/commands/reset_odometry', Empty, queue_size=10)
-masterSub = rospy.Subscriber("/master", String)
+masterSub = rospy.Subscriber("/master", String, masterCallBack)
 
 
 def resetOdom():
 	timer = time()
 	while time() - timer < 0.25:
 	    reset_odom.publish(Empty())
-
-def cmdCallBack(msg):
-	print(msg)
-	if msg[0] == "F":
-		forward(double(msg[1:]))
-	elif msg[0] == "T":
-		turn(double(msg[1:]))
-
 
 
 
@@ -287,10 +284,10 @@ if __name__ == '__main__':
 		#h.time = 56
 
 		#robot.path = [a, b, c, d, e, f, g ,h] # après on récupérera par message
-		
+
 		print(robot.path)
 		#followPath()
-		
+
 		#twister()
 		rospy.spin()
 	except rospy.ROSInterruptException:
