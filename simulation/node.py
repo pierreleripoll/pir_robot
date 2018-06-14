@@ -11,9 +11,8 @@ class Node(Cell):
         self.cout = 0
         self.h = float('inf') # heuristique
         self.parent = None
-        self.time = 0
+        self.rectangle=[]
         self.arrow=[]
-        self.rectangle = []
 
     def equals(self,node):
         if self.isSame(node) and self.dir == node.dir :
@@ -32,13 +31,11 @@ class Node(Cell):
         return returnV
 
     def __repr__(self):
-        return "("+str(self.x)+","+str(self.y)+")"+","+self.dir+",t"+str(self.time)
+        return "("+str(self.x)+","+str(self.y)+","+str(self.typeC)+")"+","+self.dir+",h"+str(self.h)
+
 
 
     def reset(self):
         self.cout = 0
         self.h= math.inf
         self.parent = None
-
-    def msg(self):
-        return str(self.x)+","+str(self.y)+","+self.dir+","+str(self.time)
