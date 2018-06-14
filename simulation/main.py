@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+
 from node import Node
 from grille import Grille
 from astar import AStar
@@ -9,9 +8,10 @@ from coordination import Coordination
 
 from InterfaceV3 import *
 
-lab = Grille(8,4)
-lab.setRect(4,8,0,0,".")
-
+lab = Grille(10,6)
+lab.setRect(1,1,4,8,".")
+lab.setRect(3,6,1,2,"?");
+lab.setRect(3,2,1,1,"?");
 
 # Liste des robots
 robots = []
@@ -58,7 +58,7 @@ astar = AStar(lab)
 #print("validatePath(b) : " + str(coord.validatePath(b)))
 
 
-dic = { "?":"grey", ".":"white","S":"green","G":"blue","P1":"red","P2":"yellow","P3":"purple","P4":"brown","P5":"orange","P6":"pink","P7":"thistle","P8":"black"}
+dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
 
 disp= Display(lab,astar,dic,paths,robots)
 

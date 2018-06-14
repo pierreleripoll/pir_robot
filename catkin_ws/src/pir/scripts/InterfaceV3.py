@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 
 from Tkinter import *
 from functools import*
@@ -11,8 +11,6 @@ from coordination import Coordination
 import rospy
 from std_msgs.msg import String
 
-masterPub = rospy.Publisher("master", String, queue_size=10)
-rospy.init_node("master")
 
 class Display:
 
@@ -33,11 +31,10 @@ class Display:
         #Fenetre secondaire
         self.utility=Toplevel(self.window)
         self.utility.title("Toolbox")
-        self.msgButton = Button(self.utility, text='Envoyer les chemins aux robots', command=sendRobotsMsgs)
-        self.msgButton.pack()
+        self.msgButton = Button(self.utility, text='Envoyer les chemins aux robots', command=self.sendRobotsMsgs)
         #Fenetre principal
         self.utility.transient(self.window)
-        self.can=Canvas(self.window, width=self.boxSide*self.boxesPerColumn, height=self.boxSide*self.boxesPerRow, bg='ivory')
+        self.can=Canvas(self.window, width=self.width, height=self.height, bg='ivory')
         self.can.pack()
         self.bstop=Button(self.window, text='Fermer les fenêtres', command=self.window.destroy)
         self.bstop.pack()
@@ -47,24 +44,25 @@ class Display:
         self.click=0
         self.start=None
         self.end=None
-        self.directionStart=None
-        self.directionEnd=None
         #element pour afficher les robots
         self.brobot=Button(self.utility, text='Créer robot',command=partial(self.transition_robot,self.can))
         self.brobot.pack(side="left")
+        self.msgButton.pack()
         self.chain = Label(self.window)
         self.can.bind("<Motion>",self.showBox)
         self.chain.pack()
 
+        self.masterPub = rospy.Publisher("master", String, queue_size=10)
+        rospy.init_node("master")
+
 #Cree la grille sur l ecran--------------------------------------------------
-        for c in range(min(self.boxesPerRow,self.boxesPerColumn)):
-                    self.can.create_line(self.width*self.boxSide, 0,self.width*self.boxSide,self.width)
-                    self.can.create_line(0,self.height*self.boxSide,self.height,self.height*self.boxSide)
+        for c in range(max(self.boxesPerRow,self.boxesPerColumn)):
+                    self.can.create_line(c*self.boxSide, 0,c*self.boxSide,self.height)
+                    self.can.create_line(0,c*self.boxSide,self.width,c*self.boxSide)
         if dic :
             self.dic = dic
             for typeC in dic:
                 self.colorType(typeC,dic[typeC])
-        self.window.mainloop()
 
     def colorType(self,typeC,color):
         for column in self.grille.plan:
@@ -184,8 +182,6 @@ class Display:
             if self.Rname == None:
                 self.popup()
                 self.window.wait_window(self.top)
-                robotStart=Node(self.start,self.directionStart)
-                robotEnd=Node(self.end,self.directionEnd)
                 newRobot=Robot(self.Rname,robotStart,robotEnd)
                 self.nbR=self.nbR+1
                 self.robots.append(newRobot)
@@ -251,20 +247,6 @@ class Display:
         self.l.pack()
         self.e=Entry(top)
         self.e.pack()
-        self.lD=Label(top,text="Veuilliez choisir la direction de départ votre Robot")
-        choices = ['L', 'R', 'U','D']
-        variableD = StringVar(top)
-        variableD.set('L')
-        rollDownD=Combobox(top, values = choices)
-        self.directionStart=variableD.get()
-        rollDown.pack()
-        self.lE=Label(top,text="Veuilliez choisir la direction d'arrivée votre Robot")
-        choices2 = ['L', 'R', 'U','D']
-        variableE = StringVar(top)
-        variableE.set('L')
-        rollDownE=Combobox(top, values = choices2)
-        self.directionStart=variableE.get()
-        rollDownE.pack()
         self.b=Button(top,text='Ok',command=self.cleanup)
         self.b.pack()
 
@@ -272,11 +254,11 @@ class Display:
         self.Rname=self.e.get()
         self.top.destroy()
 
-	def sendRobotsMsgs() :
-		try:
-			print("master")
-			for robot in disp.robots :
-				robotMsg = robot.createMsg()
-				masterPub.publish(robotMsg)
-		except rospy.ROSInterruptException:
-			pass
+    def sendRobotsMsgs(self) :
+        try:
+            print("master")
+            for robot in self.robots :
+                robotMsg = robot.createMsg()
+                self.masterPub.publish(robotMsg)
+        except rospy.ROSInterruptException:
+            pass
