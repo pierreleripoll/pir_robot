@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
-sys.path.insert(0, '../')
 
 from Tkinter import *
 from functools import*
-from simulation.astar import AStar
-from simulation.node import Node
-from simulation.robot import Robot
-from simulation.cell import Cell
-from simulation.coordination import Coordination
+from astar import AStar
+from node import Node
+from robot import Robot
+from cell import Cell
+from coordination import Coordination
 import rospy
 from std_msgs.msg import String
 
