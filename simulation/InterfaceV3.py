@@ -46,6 +46,8 @@ class Display:
         self.click=0
         self.start=None
         self.end=None
+        self.directionStart=None
+        self.directionEnd=None
         #element pour afficher les robots
         self.brobot=Button(self.utility, text='Créer robot',command=partial(self.transition_robot,self.can))
         self.brobot.pack(side="left")
@@ -185,6 +187,8 @@ class Display:
             if self.Rname == None:
                 self.popup()
                 self.window.wait_window(self.top)
+                robotStart=Node(self.start,self.directionStart)
+                robotEnd=Node(self.end,self.directionEnd)
                 newRobot=Robot(self.Rname,robotStart,robotEnd)
                 self.nbR=self.nbR+1
                 self.robots.append(newRobot)
@@ -250,6 +254,20 @@ class Display:
         self.l.pack()
         self.e=Entry(top)
         self.e.pack()
+        self.lD=Label(top,text="Veuilliez choisir la direction de départ votre Robot")
+        choices = ['L', 'R', 'U','D']
+        variableD = StringVar(top)
+        variableD.set('L')
+        rollDownD=Combobox(top, values = choices)
+        self.directionStart=variableD.get()
+        rollDown.pack()
+        self.lE=Label(top,text="Veuilliez choisir la direction d'arrivée votre Robot")
+        choices2 = ['L', 'R', 'U','D']
+        variableE = StringVar(top)
+        variableE.set('L')
+        rollDownE=Combobox(top, values = choices2)
+        self.directionStart=variableE.get()
+        rollDownE.pack()
         self.b=Button(top,text='Ok',command=self.cleanup)
         self.b.pack()
 
