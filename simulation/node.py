@@ -39,3 +39,6 @@ class Node(Cell):
         self.cout = 0
         self.h= math.inf
         self.parent = None
+
+    def msg(self):
+        return str(self.x)+","+str(self.y)+","+self.dir+","+str(self.time)
