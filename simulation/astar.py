@@ -104,12 +104,11 @@ class AStar:
 
 
     def addNodeToOpenList(self,node,goal,nodeParent = None):
-        if nodeParent:
+        if nodeParent and len(self.closedList) !=1:
             if node.parent.dir == node.dir :
                 node.cout = nodeParent.cout+1
             if nodeParent.dir != node.dir :
                 node.cout = nodeParent.cout+2
-
         else :
             node.cout = 1
         node.h = node.cout + node.dist(goal)
