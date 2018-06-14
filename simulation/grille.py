@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-
+# -*- coding: utf-8 -*
 import sys
 import math
 
@@ -101,4 +99,4 @@ class Grille:
                 returnPrint += " "
             returnPrint += str(i)+" "+string+"\n"
 
-        return returnPrint
+            return returnPrint
