@@ -185,6 +185,8 @@ class Display:
             if self.Rname == None:
                 self.popup()
                 self.window.wait_window(self.top)
+                print(repr(robotStart))
+                print(repr(robotEnd))
                 newRobot=Robot(self.Rname,robotStart,robotEnd)
                 self.nbR=self.nbR+1
                 self.robots.append(newRobot)

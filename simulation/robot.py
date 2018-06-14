@@ -45,7 +45,7 @@ class Robot :
     def setTime(self) :
         self.time.append(0)
         for i in range(1, len(self.path)) :
-            self.time.append(self.time[i-1] + 6 + 5*self.isTurning(self.path[i])) # constantes arbitraires
+            self.time.append(self.time[i-1] + 6 -self.isTurning(self.path[i])) # constantes arbitraires
         for i, node in enumerate(self.path) :
             node.time=self.time[i]
 

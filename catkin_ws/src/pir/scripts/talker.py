@@ -19,16 +19,16 @@ from simulation.robot import Robot
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 
-
+BOX_SIZE = 0.6
 DELTA_GOAL = 0.01
-DELTA_TURN = 0.08
+DELTA_TURN = 0.001
 SPEED_FORWARD = 0.2
 SPEED_TURN = 0.8
 
 pose = Pose()
 position = [0, 0]
-INIT_DIRECTION = "R" # fixe pour l'instant
-orientation = -math.pi/2
+INIT_DIRECTION = "L" # fixe pour l'instant
+orientation = math.pi/2
 yaw = 0
 
 robot = Robot("Nevers")
@@ -39,7 +39,7 @@ def cmdCallBack(data):
 	if msg[0] == "F" or msg[0] == "f":
 		forward(float(msg[1:]))
 	elif msg[0] == "T" or msg[0]=="t":
-		turn(float(msg[1:]))
+		turn(math.pi * float(msg[1:])/180)
 
 	if msg[0] =="P" or msg[0] == "p":
 		pass
@@ -156,7 +156,9 @@ def turn(angle):
 	print("ANGLE : "+str(angle))
 	resetOdom()
 	global yaw
-	#print(pose)
+	global pose
+	print("INIT YAW :"+str(yaw))
+	print(pose)
 	z0 = yaw
 	zF = yaw + abs(angle)
 	z=yaw
@@ -166,6 +168,8 @@ def turn(angle):
 	print "z0 ",z0," zF ", zF
 	deriv = abs(zcount-abs(angle))
 	while not goal and not rospy.is_shutdown() :
+		print yaw
+		yaw = max(0,yaw)
 		if np.sign(yaw) == np.sign(z):
 			dz = abs(yaw -z)
 		else:
@@ -193,7 +197,7 @@ def turn(angle):
 		rospy.sleep(0.01)
 	motion.angular.z = 0
 	twistPub.publish(motion)
-	print("END TURN")
+	print("END TURN : "+str(yaw))
 
 
 
@@ -213,6 +217,8 @@ def getNodeAngle(node) :
 def goTo(node) :
 	global position
 	global orientation
+	node.x = node.x * BOX_SIZE
+	node.y = node.y * BOX_SIZE
 	print("POSITION : " + str(position) + "ORIENTATION : "+ str(orientation))
 	rospy.sleep(0.3)
 	dz =getNodeAngle(node)-orientation
@@ -239,6 +245,12 @@ def goTo(node) :
 
 def followPath() :
 	init = rospy.get_time()
+	global position
+	global INIT_DIRECTION
+	position[0] = robot.path[0].x * BOX_SIZE
+	position[1] = robot.path[0].y * BOX_SIZE
+	INIT_DIRECTION = robot.path[0].dir
+	robot.path.pop(0)
 	for node in robot.path :
 		print("-------")
 		print("NEW NODE")
