@@ -65,7 +65,8 @@ class Display:
             self.dic = dic
             for typeC in dic:
                 self.colorType(typeC,dic[typeC])
-
+        self.window.mainloop()
+        
     def colorType(self,typeC,color):
         for column in self.grille.plan:
             for cell in column:

@@ -71,6 +71,8 @@ dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
 
 disp= Display(lab,astar,dic,paths,robots)
 
+
+
 #disp.showPath(aPath, "red")
 #disp.showPath(bPath, "yellow")
 #disp.showPath(cPath, "purple")
