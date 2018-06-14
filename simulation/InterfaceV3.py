@@ -17,7 +17,6 @@ rospy.init_node("master")
 class Display:
 
     def __init__(self,grille,astar,dic = None,paths= [],robots=[]):
-
         self.dic = dic
         self.paths=paths
         self.robots=robots
