@@ -36,7 +36,7 @@ class Display:
         self.msgButton = Button(self.utility, text='Envoyer les chemins aux robots', command=self.sendRobotsMsgs)
         #Fenetre principal
         self.utility.transient(self.window)
-        self.can=Canvas(self.window, width=self.width, height=self.height, bg='ivory')
+        self.can=Canvas(self.window, width=self.boxSide*self.boxesPerColumn, height=self.boxSide*self.boxesPerRow, bg='ivory')
         self.can.pack()
         self.bstop=Button(self.window, text='Fermer les fenêtres', command=self.window.destroy)
         self.bstop.pack()
@@ -58,15 +58,15 @@ class Display:
         rospy.init_node("master")
 
 #Cree la grille sur l ecran--------------------------------------------------
-        for c in range(max(self.boxesPerRow,self.boxesPerColumn)):
-                    self.can.create_line(c*self.boxSide, 0,c*self.boxSide,self.height)
-                    self.can.create_line(0,c*self.boxSide,self.width,c*self.boxSide)
+        for c in range(min(self.boxesPerRow,self.boxesPerColumn)):
+                    self.can.create_line(self.width*self.boxSide, 0,self.width*self.boxSide,self.width)
+                    self.can.create_line(0,self.height*self.boxSide,self.height,self.height*self.boxSide)
         if dic :
             self.dic = dic
             for typeC in dic:
                 self.colorType(typeC,dic[typeC])
         self.window.mainloop()
-        
+
     def colorType(self,typeC,color):
         for column in self.grille.plan:
             for cell in column:
