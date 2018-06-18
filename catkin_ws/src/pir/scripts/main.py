@@ -10,8 +10,8 @@ from simulation.astar import AStar
 from simulation.cell import Cell
 from simulation.robot import Robot
 from simulation.coordination import Coordination
-
 from simulation.InterfaceV3 import *
+
 lab = Grille(8,4)
 lab.setRect(0,0,4,8,".")
 
@@ -29,4 +29,4 @@ astar = AStar(lab)
 
 dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
 
-disp= Display(lab,astar,dic,paths,robots)
+disp = Display(lab,astar,dic,paths,robots)

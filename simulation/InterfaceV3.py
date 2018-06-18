@@ -8,8 +8,8 @@ from node import Node
 from robot import Robot
 from cell import Cell
 from coordination import Coordination
-#import rospy
-#from std_msgs.msg import String
+import rospy
+from std_msgs.msg import String
 
 
 
@@ -62,14 +62,16 @@ class Display:
         self.baddObstacle.pack(anchor="w")
         self.bdeleteObstacle=Button(self.utility, text='Retirer un obstacle',command=partial(self.transition_deleteObstacle,self.can))
         self.bdeleteObstacle.pack(anchor="w")
-        self.msgButton = Button(self.utility, text='Envoyer les chemins aux robots')#self.sendRobotsMsgs)
-        self.msgButton.pack(side="bottom",anchor="s")
+        self.msgButton = Button(self.utility, text='Lancer les robots', command=self.sendRobotsMsgs)
+        self.msgButton.pack(side="bottom", anchor="s")
         self.brobot=Button(self.utility, text='Créer robot',command=partial(self.transition_robot,self.can))
         self.brobot.pack(anchor="w")
         self.bdelete=Button(self.utility, text='Supprimer un robot',command=partial(self.deleteRobot))
         self.bdelete.pack(side="left",anchor="w")
-        #self.masterPub = rospy.Publisher("master", String, queue_size=10)
-        #rospy.init_node("master")
+        
+        self.masterPub = rospy.Publisher("master", String, queue_size=10)
+        rospy.init_node("master")
+        
 #Cree la grille sur l ecran--------------------------------------------------
         for c in range(max(self.boxesPerRow,self.boxesPerColumn)):
                     self.can.create_line(self.width*self.boxSide, 0,self.width*self.boxSide,self.width)
@@ -106,8 +108,6 @@ class Display:
             color = self.dic[cell.typeC]
         rect = self.can.create_rectangle(x,y,x+self.boxSide,y+self.boxSide,fill=color)
         cell.rectangle.append(rect)
-
-
 
     def reset(self):
         for typeC in self.dic:
@@ -292,6 +292,7 @@ class Display:
         self.b=Button(top,text='Ok',command=self.cleanupB)
         self.b.pack()
         top.bind('<Return>', self.cleanup)
+        
     def cleanup(self,event):
         self.Rname=self.e.get()
         for i,p in enumerate(self.robots):
@@ -304,6 +305,7 @@ class Display:
             self.top.destroy()
         else:
             self.buttonactive2=False
+            
     def cleanupB(self):
         self.Rname=self.e.get()
         for i,p in enumerate(self.robots):
@@ -316,15 +318,7 @@ class Display:
             self.top.destroy()
         else:
             self.buttonactive2=False
-
-	# def sendRobotsMsgs(self) :
-    #     try:
-    #         print("master")
-    #         for robot in self.robots :
-    #             robotMsg = robot.createMsg()
-    #             self.masterPub.publish(robotMsg)
-    #     except rospy.ROSInterruptException:
-    #         pass
+			
 #Supprimer un robot ----------------------------------------------------------------------------------------------------------------------------
 
     def deleteRobot(self):
@@ -452,3 +446,12 @@ class Display:
 
     def transition_deleteObstacle(self,Canvas):
         self.callbutton=self.can.bind("<ButtonPress>",self.deleteObstacle)
+
+    def sendRobotsMsgs(self) :
+        try:
+            print("master")
+            for robot in self.robots :
+                robotMsg = robot.createMsg()
+                self.masterPub.publish(robotMsg)
+        except rospy.ROSInterruptException:
+            pass
