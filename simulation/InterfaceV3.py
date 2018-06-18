@@ -32,6 +32,7 @@ class Display:
         #Fenetre secondaire
         self.utility=Toplevel(self.window)
         self.utility.title("Toolbox")
+        self.utility.resizable(True,False)
         #Fenetre principal
         self.utility.transient(self.window)
         self.can=Canvas(self.window, width=self.boxSide*self.boxesPerColumn, height=self.boxSide*self.boxesPerRow, bg='ivory')
@@ -195,6 +196,7 @@ class Display:
                 self.reset()
                 if self.Rname == None:
                     self.popup()
+
                     self.window.wait_window(self.top)
                     self.directionStart=self.var.get()
                     self.directionEnd=self.var2.get()
@@ -228,12 +230,22 @@ class Display:
                     self.click=0
                 self.reset()
                 self.buttonactive=False
+                self.baddObstacle.config(state="normal")
+                self.bdeleteObstacle.config(state="normal")
+                self.msgButton.config(state="normal")
+                self.brobot.config(state="normal")
+                self.bdelete.config(state="normal")
 
     def transition_robot(self,Canvas):
         if self.buttonactive==True:
             pass
         else:
             self.buttonactive=True
+            self.baddObstacle.config(state="disabled")
+            self.bdeleteObstacle.config(state="disabled")
+            self.msgButton.config(state="disabled")
+            self.brobot.config(state="disabled")
+            self.bdelete.config(state="disabled")
             self.callbutton=self.can.bind("<ButtonPress>",self.create_robot)
 
 
@@ -259,19 +271,19 @@ class Display:
     def popup(self):
         top=self.top=Toplevel(self.utility)
         self.top.title("Robot Configuration")
-        self.l=Label(top,text="Veuilliez rentrer le nom de votre Robot")
+        self.l=Label(top,text="Veuillez rentrer le nom de votre Robot")
         self.l.pack()
         self.e=Entry(top)
         self.e.pack()
         self.var = StringVar(top,"L")
         self.var2 = StringVar(top,"L")
-        self.lD=Label(top,text="Veuilliez choisir la direction de départ votre Robot")
+        self.lD=Label(top,text="Veuillez choisir la direction de départ votre Robot")
         self.lD.pack()
         Radiobutton(top, text = "Left", variable=self.var, value = 'L').pack(anchor="w")
         Radiobutton(top, text = "Right", variable=self.var, value = 'R').pack(anchor="w")
         Radiobutton(top, text = "Up", variable=self.var, value ="U").pack(anchor="w")
         Radiobutton(top, text = "Down", variable=self.var, value = "D").pack(anchor="w")
-        self.lE=Label(top,text="Veuilliez choisir la direction d'arrivée votre Robot")
+        self.lE=Label(top,text="Veuillez choisir la direction d'arrivée votre Robot")
         self.lE.pack()
         Radiobutton(top, text = "Left", variable=self.var2, value = "L").pack(anchor="w")
         Radiobutton(top, text = "Right", variable=self.var2, value = "R").pack(anchor="w")
@@ -314,11 +326,11 @@ class Display:
     #     except rospy.ROSInterruptException:
     #         pass
 #Supprimer un robot ----------------------------------------------------------------------------------------------------------------------------
-                    ## DEBUG: Recalculer les chemins à la suppression
 
     def deleteRobot(self):
         if self.buttonactive==False:
             self.buttonactive=True
+            self.brobot.config(state="disabled")
             self.listbox = Listbox(self.utility)
             for i,p in enumerate(self.robots):
                 self.listbox.insert(END,p.name)
@@ -346,14 +358,12 @@ class Display:
                 self.can.delete(cello.display_txt)
                 self.grille.chgTxt(xc,yc," ")
                 self.grille.setCell(cello)
-                print("Disp ",cello.typeC,"x ",xc," y ",yc," node.txt ",cello.txt)
                 self.reset()
                 xc , yc = p.goal.x , p.goal.y
                 cello=self.grille.getCell(xc,yc)
                 self.grille.chgCell(xc,yc,".")
                 self.grille.chgTxt(xc,yc," ")
                 self.grille.setCell(cello)
-                print("Disp ",cello.typeC,"x ",xc," y ",yc," node.txt ",cello.txt)
                 self.can.delete(cello.display_txt)
                 self.reset()
                 #supprimons mtn
@@ -364,10 +374,6 @@ class Display:
                 del self.robots[nbA]
                 del self.paths
                 self.paths=[]
-
-
-                print ("List des robots",self.robots)
-                print("List des paths", self.paths)
 
                 coor = Coordination(self.robots)
 
@@ -395,7 +401,7 @@ class Display:
         self.blistbox.pack_forget()
         self.bcancel.pack_forget()
         self.buttonactive=False
-
+        self.brobot.config(state="normal")
 
 #Message d'erreur---------------------------------------------------------------------------
     def danger(self,app,strg):
