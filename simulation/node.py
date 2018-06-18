@@ -6,12 +6,11 @@ class Node(Cell):
     DIRECTIONS = ["U","R","D","L"]
 
     def __init__(self, cell, dir):
-        Cell.__init__(self, cell.x, cell.y, cell.typeC, cell.txt)
+        Cell.__init__(self, cell.x, cell.y, cell.typeC, cell.txt,cell.rectangle)
         self.dir = dir
         self.cout = 0
         self.h = float('inf') # heuristique
         self.parent = None
-        self.rectangle=[]
         self.arrow=[]
         self.time = 0
 

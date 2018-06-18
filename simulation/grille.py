@@ -24,7 +24,9 @@ class Grille:
     def chgCell(self,x,y,typeC):
         self.plan[x][y].changeType(typeC)
 
-
+    def chgTxt(self,x,y,txt):
+        self.plan[x][y].changeTxt(txt)
+        
     def findNeighbors(self,node):
 
         possiblesNodes = []

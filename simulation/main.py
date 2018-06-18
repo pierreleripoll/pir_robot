@@ -58,7 +58,7 @@ astar = AStar(lab)
 #print("validatePath(b) : " + str(coord.validatePath(b)))
 
 
-dic = { "?":"grey", ".":"white","S":"green","G":"blue"}
+dic = { "?":"grey", ".":"white","S":"chartreuse","G":"dodgerblue"}
 
 disp= Display(lab,astar,dic,paths,robots)
 

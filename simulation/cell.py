@@ -4,17 +4,19 @@ import math
 
 class Cell:
 
-    def __init__(self, x, y, typeC = '?', txt=None):
+    def __init__(self, x, y, typeC = '?', txt=None,rectangle=[]):
         self.x = x
         self.y = y
         self.typeC = typeC
         self.txt = txt # texte à afficher le cas échéant
-
+        self.display_txt=None
+        self.rectangle=[]
 
     def changeType(self,typeC):
         self.typeC = typeC
 
-
+    def changeTxt(self,txt):
+        self.txt=txt
 
     def isObstacle(self):
         if self.typeC == "?" or self.typeC == "#":
