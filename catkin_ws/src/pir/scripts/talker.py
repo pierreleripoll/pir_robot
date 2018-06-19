@@ -64,7 +64,7 @@ def masterCallBack(data) :
 
 
 twistPub=rospy.Publisher("/cmd_vel_mux/input/teleop",Twist, queue_size=10)
-rospy.init_node("twister")
+rospy.init_node(robot.name)
 motion = Twist()
 odomSub = rospy.Subscriber("/odom", Odometry, odomCallBack)
 cmdSub = rospy.Subscriber("/command", String, cmdCallBack)
