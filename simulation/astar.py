@@ -93,7 +93,7 @@ class AStar:
         if not self.openList or len(self.openList)==0:
             #print("OpenList empty",file=sys.stderr)
             return 0
-        if node.dist(goal) == 0:
+        if node.dist(goal) == 0 and node.dir == goal.dir:
             #print("Goal found, node.dist(goal)=0",file=sys.stderr)
             return 0
         if goal.typeC == '?' and node.dist(goal)==1:

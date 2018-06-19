@@ -167,10 +167,10 @@ class Display:
                 arrow=self.can.create_line(x+20,y,x+20,y+self.boxSide, arrow="first")
             node.arrow.append(arrow)
         elif active==1:
-            for i,p in enumerate(node.rectangle):
-                i=i
-            self.can.delete(node.rectangle[i])
-            self.can.delete(node.arrow[i])
+            
+                
+            self.can.delete(node.rectangle[-1])
+            self.can.delete(node.arrow[-1])
 
         self.can.tag_raise(node.display_txt)
 
@@ -204,13 +204,15 @@ class Display:
                     print("direction d arivee:", self.directionEnd)
                     robotStart=Node(self.start,self.directionStart)
                     robotEnd=Node(self.end,self.directionEnd)
+                    print("Robot End",repr(robotEnd))
                     newRobot=Robot(self.Rname,robotStart,robotEnd)
                     self.robots.append(newRobot)
                     self.grille.setRobots(self.robots)
                     newRobot.path=self.astar.findPath(robotStart,robotEnd)
-                    self.paths.append(newRobot.path)
-
-
+                    last=len(newRobot.path)
+                    if newRobot.path[last-1].dir != robotEnd.dir:
+                        newRobot.path.append(robotEnd)
+						
                     coor = Coordination(self.robots)
                     check , node = coor.validatePath(newRobot)
 
@@ -218,7 +220,6 @@ class Display:
                         node.changeType("?")
                         self.grille.setCell(node)
                         newRobot.path=self.astar.findPath(robotStart,robotEnd)
-                        self.paths.append(newRobot.path)
                         node.changeType(".")
                         self.grille.setCell(node)
                         check , node = coor.validatePath(newRobot)
@@ -228,6 +229,8 @@ class Display:
                     self.nbR=self.nbR+1
                     newRobot.setTime()
                     self.click=0
+                    coor.coordinateRobots()
+                    self.paths.append(newRobot.path)
                 self.reset()
                 self.buttonactive=False
                 self.baddObstacle.config(state="normal")
@@ -385,6 +388,7 @@ class Display:
                     bot.setTime()
                     self.afficher_chemin(bot,nbr)
                 self.nbR=len(self.robots)
+                coor.coordinateRobots()
             else:
                 pass
         self.cancel()
@@ -452,6 +456,7 @@ class Display:
             print("master")
             for robot in self.robots :
                 robotMsg = robot.createMsg()
+                print(robotMsg)
                 self.masterPub.publish(robotMsg)
         except rospy.ROSInterruptException:
             pass

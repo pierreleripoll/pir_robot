@@ -12,8 +12,8 @@ class Coordination :
     # Renvoie l'intersection entre les chemins de 2 robots, càd les noeuds communs aux 2 chemins
     def intersection(self, robot1, robot2) :
         intersection = []
-        print("Robot",robot1.name," path :",robot1.path)
-        print("Robot",robot2.name," path :",robot2.path)
+        #print("Robot",robot1.name," path :",robot1.path)
+        #print("Robot",robot2.name," path :",robot2.path)
         for node1 in robot1.path :
             for node2 in robot2.path :
                 if node1.isSame(node2) :
@@ -90,12 +90,14 @@ class Coordination :
         collisionsCounter = 0
         # Pour l'instant, de façon arbitraire, on parcourt les robots dans l'ordre de la liste
         for i in range(len(self.robots)) :
+            print("COORDINATION : " + self.robots[i].name + str(self.robots[i].path))
             for j in range(len(self.robots)) :
                 if(i != j) :
                     collNode = self.getFirstCollisionNode(self.robots[i], self.robots[j])
                     if(collNode != None) :
                         collisionsCounter += 1
                         bestRobot = self.getBestRobot(self.robots[i], self.robots[j], collNode)
-                        bestRobot.wait(collNode, 10)
+                        bestRobot.wait(collNode, 7)
+            print("COORDINATION : " + self.robots[i].name + str(self.robots[i].path))
         if(collisionsCounter != 0) :
             self.coordinateRobots()

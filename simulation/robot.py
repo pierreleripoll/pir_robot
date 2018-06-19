@@ -51,11 +51,13 @@ class Robot :
 
     # Induit un délai supplémentaire avant d'atteindre le noeud donné en paramètre
     def wait(self, node, delay) :
+        print(self.name)
         index = 0
         while(self.path[index].x != node.x or self.path[index].y != node.y) :
             index += 1
-        for i in range(index, len(self.path)) :
+        for i in range(index-1, len(self.path)) :
             self.time[i] += delay
+            self.path[i].time += delay
 
     def __repr__(self) :
         return "Robot " + str(self.name) + " is at node (" + str(self.x) + "," + str(self.y) + ") and going to (" + str(self.goal.x) + "," + str(self.goal.y) + ")"
