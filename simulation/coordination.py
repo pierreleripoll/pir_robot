@@ -81,7 +81,7 @@ class Coordination :
     def getFirstCollisionNode(self, robot1, robot2) :
         for i in range(len(robot1.path)) :
             for j in range(len(robot2.path)) :
-                if(robot1.path[i].isSame(robot2.path[j]) and robot1.time[i] == robot2.time[j]) :
+                if(robot1.path[i].isSame(robot2.path[j]) and abs(robot1.time[i] - robot2.time[j]) < 6) :
                     return robot1.path[i]
         return None
 
@@ -97,7 +97,7 @@ class Coordination :
                     if(collNode != None) :
                         collisionsCounter += 1
                         bestRobot = self.getBestRobot(self.robots[i], self.robots[j], collNode)
-                        bestRobot.wait(collNode, 7)
+                        bestRobot.wait(collNode, 6)
             print("COORDINATION : " + self.robots[i].name + str(self.robots[i].path))
         if(collisionsCounter != 0) :
             self.coordinateRobots()

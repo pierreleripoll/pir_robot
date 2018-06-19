@@ -167,8 +167,6 @@ class Display:
                 arrow=self.can.create_line(x+20,y,x+20,y+self.boxSide, arrow="first")
             node.arrow.append(arrow)
         elif active==1:
-            
-                
             self.can.delete(node.rectangle[-1])
             self.can.delete(node.arrow[-1])
 
