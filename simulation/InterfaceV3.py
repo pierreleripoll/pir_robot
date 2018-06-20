@@ -27,7 +27,7 @@ class Display:
         self.boxSide=self.height/(max(self.boxesPerRow,self.boxesPerColumn))
         self.grille = grille
         self.window=Tk()
-        self.window.resizable(True,False)
+        #self.window.resizable(True,False)
         self.window.title("Workspace")
         #Fenetre secondaire
         self.utility=Toplevel(self.window)
@@ -68,10 +68,10 @@ class Display:
         self.brobot.pack(anchor="w")
         self.bdelete=Button(self.utility, text='Supprimer un robot',command=partial(self.deleteRobot))
         self.bdelete.pack(side="left",anchor="w")
-        
+
         self.masterPub = rospy.Publisher("master", String, queue_size=10)
         rospy.init_node("master")
-        
+
 #Cree la grille sur l ecran--------------------------------------------------
         for c in range(max(self.boxesPerRow,self.boxesPerColumn)):
                     self.can.create_line(self.width*self.boxSide, 0,self.width*self.boxSide,self.width)
@@ -210,7 +210,7 @@ class Display:
                     last=len(newRobot.path)
                     if newRobot.path[last-1].dir != robotEnd.dir:
                         newRobot.path.append(robotEnd)
-						
+
                     coor = Coordination(self.robots)
                     check , node = coor.validatePath(newRobot)
 
@@ -293,7 +293,7 @@ class Display:
         self.b=Button(top,text='Ok',command=self.cleanupB)
         self.b.pack()
         top.bind('<Return>', self.cleanup)
-        
+
     def cleanup(self,event):
         self.Rname=self.e.get()
         for i,p in enumerate(self.robots):
@@ -306,7 +306,7 @@ class Display:
             self.top.destroy()
         else:
             self.buttonactive2=False
-            
+
     def cleanupB(self):
         self.Rname=self.e.get()
         for i,p in enumerate(self.robots):
@@ -319,7 +319,7 @@ class Display:
             self.top.destroy()
         else:
             self.buttonactive2=False
-			
+
 #Supprimer un robot ----------------------------------------------------------------------------------------------------------------------------
 
     def deleteRobot(self):

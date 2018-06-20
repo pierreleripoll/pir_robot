@@ -42,18 +42,23 @@ class Coordination :
             if node.isSame(robot2.goal) :
                 g2 = True
 
+        if s1 or g1 :
+            obstacleNode = intersect[1]
+        else :
+            if intersect :
+                obstacleNode = intersect[0]
 
         if s1 and g1 :
             #intersection possède a la fois s and goal d'un robot
-            return 1, intersect[int(len(intersect)/2)]
-        if s2 and g2:
-            return 1, intersect[int(len(intersect)/2)]
+            return 1, obstacleNode
+        elif s2 and g2 :
+            return 1, obstacleNode
         elif s1 and s2 :
             #les deux starts
-            return 2, robot2.start
+            return 2, obstacleNode
         elif g1 and g2 :
             #les deux goals
-            return 3, robot2.goal
+            return 3, obstacleNode
         else :
             return 0, None
 
